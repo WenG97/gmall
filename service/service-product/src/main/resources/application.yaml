@@ -2,7 +2,7 @@ server:
   port: 7000
 spring:
   datasource:
-    url: jdbc:mysql://192.168.41.101:3306/gmall_product?useSSL=false
+    url: jdbc:mysql://192.168.41.101:3306/gmall_product?useSSL=false&characterEncoding=utf-8
     username: root
     password: 123456
     driver-class-name: com.mysql.jdbc.Driver
@@ -11,3 +11,14 @@ spring:
     base-url: http://192.168.41.101:9411/
     sender:
       type: web
+logging:
+  level:
+    root: error
+    com.weng.gulimall.product.mapper: debug
+
+# minio 参数配置
+minio:
+  endpoint: http://192.168.41.101:9000 # minio 服务地址
+  accessKey: admin # minio Access key就像用户ID，可以唯一标识你的账户
+  secretKey: admin123456 # minio Secret key是你账户的密码
+  bucketName: gmall # minio 桶名称

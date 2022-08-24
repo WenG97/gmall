@@ -1,7 +1,10 @@
 package com.weng.gulimall.product.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.weng.gulimall.model.product.BaseCategory2;
 import com.weng.gulimall.model.product.BaseCategory3;
+
+import java.util.List;
 
 /**
 * @author lingzi
@@ -10,4 +13,5 @@ import com.weng.gulimall.model.product.BaseCategory3;
 */
 public interface BaseCategory3Service extends IService<BaseCategory3> {
 
+    List<BaseCategory3> getCategory1Child(Long c2id);
 }

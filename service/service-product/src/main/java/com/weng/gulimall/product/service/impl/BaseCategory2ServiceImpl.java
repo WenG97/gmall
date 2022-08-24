@@ -27,8 +27,7 @@ public class BaseCategory2ServiceImpl extends ServiceImpl<BaseCategory2Mapper, B
     public List<BaseCategory2> getCategory1Child(Long id) {
         LambdaQueryWrapper<BaseCategory2> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(BaseCategory2::getCategory1Id,id);
-        List<BaseCategory2> list = baseCategory2Mapper.selectList(lambdaQueryWrapper);
-        return list;
+        return baseCategory2Mapper.selectList(lambdaQueryWrapper);
     }
 }
 
