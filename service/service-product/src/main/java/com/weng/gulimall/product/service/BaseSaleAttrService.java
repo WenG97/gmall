@@ -2,6 +2,7 @@ package com.weng.gulimall.product.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.weng.gulimall.model.product.BaseSaleAttr;
+import com.weng.gulimall.model.product.SpuInfo;
 
 /**
 * @author lingzi

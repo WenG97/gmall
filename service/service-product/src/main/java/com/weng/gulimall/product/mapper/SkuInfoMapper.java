@@ -2,6 +2,7 @@ package com.weng.gulimall.product.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.weng.gulimall.model.product.SkuInfo;
+import org.apache.ibatis.annotations.Param;
 
 /**
 * @author lingzi
@@ -11,6 +12,7 @@ import com.weng.gulimall.model.product.SkuInfo;
 */
 public interface SkuInfoMapper extends BaseMapper<SkuInfo> {
 
+    void updateSaleState(@Param("skuId") Long skuId, @Param("state") Integer state);
 }
 
 

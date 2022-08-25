@@ -2,8 +2,10 @@ package com.weng.gulimall.product.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.weng.gulimall.model.product.BaseSaleAttr;
+import com.weng.gulimall.model.product.SpuInfo;
 import com.weng.gulimall.product.service.BaseSaleAttrService;
 import com.weng.gulimall.product.mapper.BaseSaleAttrMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class BaseSaleAttrServiceImpl extends ServiceImpl<BaseSaleAttrMapper, BaseSaleAttr>
     implements BaseSaleAttrService{
+
 
 }
 

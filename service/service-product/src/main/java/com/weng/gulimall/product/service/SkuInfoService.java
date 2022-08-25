@@ -10,4 +10,8 @@ import com.weng.gulimall.model.product.SkuInfo;
 */
 public interface SkuInfoService extends IService<SkuInfo> {
 
+    void savaSkuInfo(SkuInfo skuInfo);
+
+
+    void updateSaleStatus(Long skuId, Integer i);
 }

@@ -4,8 +4,11 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.weng.gulimall.common.result.Result;
 import com.weng.gulimall.model.product.BaseTrademark;
 import com.weng.gulimall.product.service.BaseTrademarkService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequestMapping("/admin/product/")
 @RestController
@@ -45,5 +48,11 @@ public class BaseTrademarkController {
     public Result deleteBaseTrademark(@PathVariable("tid") Long tid){
         baseTrademarkService.removeById(tid);
         return Result.ok();
+    }
+
+    @ApiOperation("查询所有品牌")
+    @GetMapping("baseTrademark/getTrademarkList")
+    public Result getBaseTrademarkList(){
+        return Result.ok(baseTrademarkService.list());
     }
 }

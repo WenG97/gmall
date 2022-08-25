@@ -3,6 +3,8 @@ package com.weng.gulimall.product.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.weng.gulimall.model.product.SpuSaleAttr;
 
+import java.util.List;
+
 /**
 * @author lingzi
 * @description 针对表【spu_sale_attr(spu销售属性)】的数据库操作Mapper
@@ -11,6 +13,7 @@ import com.weng.gulimall.model.product.SpuSaleAttr;
 */
 public interface SpuSaleAttrMapper extends BaseMapper<SpuSaleAttr> {
 
+    List<SpuSaleAttr> getSaleAndAttrBySpuId(Long spuId);
 }
 
 
