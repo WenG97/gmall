@@ -1,18 +1,16 @@
 package com.weng.gulimall.product.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.weng.gulimall.model.product.SkuAttrValue;
-import com.weng.gulimall.model.product.SkuImage;
-import com.weng.gulimall.model.product.SkuInfo;
-import com.weng.gulimall.model.product.SkuSaleAttrValue;
-import com.weng.gulimall.product.service.SkuAttrValueService;
-import com.weng.gulimall.product.service.SkuImageService;
-import com.weng.gulimall.product.service.SkuInfoService;
+import com.weng.gulimall.model.product.*;
+import com.weng.gulimall.model.to.CategoryViewTo;
+import com.weng.gulimall.model.to.SkuDetailTo;
+import com.weng.gulimall.product.mapper.BaseCategory3Mapper;
+import com.weng.gulimall.product.service.*;
 import com.weng.gulimall.product.mapper.SkuInfoMapper;
-import com.weng.gulimall.product.service.SkuSaleAttrValueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -24,8 +22,10 @@ import java.util.List;
 public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo>
     implements SkuInfoService{
 
-
-
+    @Autowired
+    private SpuSaleAttrService spuSaleAttrService;
+    @Autowired
+    private BaseCategory3Mapper baseCategory3Mapper;
     @Autowired
     private SkuImageService skuImageService;
     @Autowired
@@ -61,6 +61,34 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo>
     public void updateSaleStatus(Long skuId , Integer state) {
         baseMapper.updateSaleState(skuId,state);
         //todo:修改es中的索引数据
+    }
+
+    @Override
+    public SkuDetailTo getSkuDetail(Long skuId) {
+        SkuDetailTo skuDetailTo = new SkuDetailTo();
+        //1、通过skuId查询到skuInfo的值
+        SkuInfo skuInfo = getById(skuId);
+        skuDetailTo.setSkuInfo(skuInfo);
+        //2、商品（sku）所属的完成分类信息
+        CategoryViewTo categoryViewTo = baseCategory3Mapper.getCategoryView(skuInfo.getCategory3Id());
+        skuDetailTo.setCategoryView(categoryViewTo);
+        //3、skuInfo内部的图片列表
+        List<SkuImage> imageList = skuImageService.getSkuImage(skuId);
+        skuInfo.setSkuImageList(imageList);
+        //查询价格
+        BigDecimal price = get1010Price(skuId);
+        skuDetailTo.setPrice(price);
+        //查询当前sku 对应的spu的名值组合，并且标记isChecked属性
+        List<SpuSaleAttr> spuSaleAttrList = spuSaleAttrService.getSaleAttrAndValueMarkSku(skuInfo.getSpuId(),skuId);
+        skuDetailTo.setSpuSaleAttrList(spuSaleAttrList);
+        //todo:还少查了valuesSkuJson属性
+        return skuDetailTo;
+    }
+
+    @Override
+    public BigDecimal get1010Price(Long skuId) {
+
+        return baseMapper.getPrice(skuId);
     }
 }
 

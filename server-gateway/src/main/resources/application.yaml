@@ -23,3 +23,7 @@ spring:
           uri: lb://service-product
           predicates:  #断言
             - Path=/admin/product/**
+        - id: web-all-route
+          uri: lb://web-all
+          predicates:
+            - Host=**.gmall.com

@@ -2,6 +2,9 @@ package com.weng.gulimall.product.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.weng.gulimall.model.product.SkuInfo;
+import com.weng.gulimall.model.to.SkuDetailTo;
+
+import java.math.BigDecimal;
 
 /**
 * @author lingzi
@@ -14,4 +17,8 @@ public interface SkuInfoService extends IService<SkuInfo> {
 
 
     void updateSaleStatus(Long skuId, Integer i);
+
+    SkuDetailTo getSkuDetail(Long skuId);
+
+     BigDecimal get1010Price(Long skuId);
 }

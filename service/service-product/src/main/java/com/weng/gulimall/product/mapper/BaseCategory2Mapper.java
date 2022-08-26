@@ -3,6 +3,9 @@ package com.weng.gulimall.product.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.weng.gulimall.model.product.BaseCategory2;
+import com.weng.gulimall.model.to.CategoryTreeTo;
+
+import java.util.List;
 
 /**
 * @author lingzi
@@ -12,6 +15,7 @@ import com.weng.gulimall.model.product.BaseCategory2;
 */
 public interface BaseCategory2Mapper extends BaseMapper<BaseCategory2> {
 
+    List<CategoryTreeTo> getAllCategoryWithTree();
 }
 
 

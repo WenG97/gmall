@@ -13,4 +13,25 @@
     <sql id="Base_Column_List">
         id,name,category2_id
     </sql>
+
+    <resultMap id="CategoryView" type="com.weng.gulimall.model.to.CategoryViewTo">
+        <id column="c1_id" property="category1Id"/>
+        <result property="category1Name" column="c1_name"/>
+        <result property="category2Id" column="c2_id"/>
+        <result property="category2Name" column="c2_name"/>
+        <result property="category3Id" column="c3_id"/>
+        <result property="category3Name" column="c3_name"/>
+    </resultMap>
+
+    <select id="getCategoryView" resultMap="CategoryView">
+        select bc1.id c1_id,
+               bc1.name c1_name,
+               bc2.id c2_id,
+               bc2.name c2_name,
+               bc3.id c3_id,
+               bc3.name c3_name
+        from base_category1 bc1 left join base_category2 bc2 on bc1.id=bc2.category1_id
+        left join base_category3 bc3 on bc2.id=bc3.category2_id
+        where bc3.id = #{category3Id}
+    </select>
 </mapper>

@@ -2,6 +2,7 @@ package com.weng.gulimall.product.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.weng.gulimall.model.product.BaseCategory2;
+import com.weng.gulimall.model.to.CategoryTreeTo;
 
 import java.util.List;
 
@@ -13,4 +14,7 @@ import java.util.List;
 public interface BaseCategory2Service extends IService<BaseCategory2> {
 
     List<BaseCategory2> getCategory1Child(Long id);
+
+    List<CategoryTreeTo> getAllCategoryWithTree();
+
 }

@@ -26,7 +26,7 @@ public class SkuController {
     private SpuSaleAttrService spuSaleAttrService;
 
     @GetMapping("list/{pn}/{ps}")
-    public Result getSkuList(@PathVariable("pn") Long pn,
+    public Result<Page<SkuInfo>> getSkuList(@PathVariable("pn") Long pn,
                              @PathVariable("ps") Long ps){
         Page<SkuInfo> page = skuInfoService.page(new Page<SkuInfo>(pn, ps));
         return Result.ok(page);
@@ -41,7 +41,7 @@ public class SkuController {
     }
 
     @GetMapping("spuSaleAttrList/{spuId}")
-    public Result spuSaleAttrList(@PathVariable("spuId")Long spuId){
+    public Result<List<SpuSaleAttr>> spuSaleAttrList(@PathVariable("spuId")Long spuId){
         List<SpuSaleAttr> list = spuSaleAttrService.getSaleAndAttrBySpuId(spuId);
         return Result.ok(list);
     }

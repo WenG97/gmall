@@ -3,6 +3,7 @@ package com.weng.gulimall.product.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.weng.gulimall.model.product.BaseCategory2;
+import com.weng.gulimall.model.to.CategoryTreeTo;
 import com.weng.gulimall.product.service.BaseCategory2Service;
 import com.weng.gulimall.product.mapper.BaseCategory2Mapper;
 import org.checkerframework.checker.units.qual.A;
@@ -28,6 +29,11 @@ public class BaseCategory2ServiceImpl extends ServiceImpl<BaseCategory2Mapper, B
         LambdaQueryWrapper<BaseCategory2> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(BaseCategory2::getCategory1Id,id);
         return baseCategory2Mapper.selectList(lambdaQueryWrapper);
+    }
+
+    @Override
+    public List<CategoryTreeTo> getAllCategoryWithTree() {
+        return  baseCategory2Mapper.getAllCategoryWithTree();
     }
 }
 

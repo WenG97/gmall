@@ -13,4 +13,24 @@
     <sql id="Base_Column_List">
         id,name,category1_id
     </sql>
+
+    <resultMap id="categoryTree" type="com.weng.gulimall.model.to.CategoryTreeTo">
+        <id column="id" property="categoryId"/>
+        <result property="categoryName" column="name"/>
+        <collection property="categoryChild" ofType="com.weng.gulimall.model.to.CategoryTreeTo">
+            <id property="categoryId" column="c2_id"/>
+            <result column="c2_name" property="categoryName"/>
+            <collection property="categoryChild" ofType="com.weng.gulimall.model.to.CategoryTreeTo">
+                <id property="categoryId" column="c3_id"/>
+                <result column="c3_name" property="categoryName"/>
+            </collection>
+        </collection>
+    </resultMap>
+    <select id="getAllCategoryWithTree" resultMap="categoryTree">
+        select bc1.id,bc1.name,
+               bc2.id c2_id,bc2.name c2_name,bc2.category1_id,
+               bc3.id c3_id,bc3.name c3_name,bc3.category2_id
+        from base_category1 bc1 left join base_category2 bc2 on bc2.category1_id=bc1.id
+        left join base_category3 bc3 on bc3.category2_id=bc2.id
+    </select>
 </mapper>
