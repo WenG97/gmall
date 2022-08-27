@@ -1,9 +1,11 @@
 package com.weng.gulimall.item;
 
+import com.weng.gulimall.common.annotation.EnableThreadPool;
 import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.client.SpringCloudApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
+@EnableThreadPool
 @EnableFeignClients
 @SpringCloudApplication
 public class ItemMainApplication {

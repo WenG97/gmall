@@ -4,7 +4,6 @@ server:
 spring:
   application:
     name: service-item
-
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 
@@ -12,3 +11,9 @@ spring:
     base-url: http://192.168.41.101:9411/
     sender:
       type: web
+app:
+  thread-pool:
+    corePoolSize: 4
+    maximumPoolSize: 8
+    queueSize: 2000
+    keepAliveTime: 300

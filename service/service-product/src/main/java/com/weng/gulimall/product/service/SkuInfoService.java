@@ -1,10 +1,12 @@
 package com.weng.gulimall.product.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.weng.gulimall.model.product.SkuImage;
 import com.weng.gulimall.model.product.SkuInfo;
 import com.weng.gulimall.model.to.SkuDetailTo;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
 * @author lingzi
@@ -21,4 +23,8 @@ public interface SkuInfoService extends IService<SkuInfo> {
     SkuDetailTo getSkuDetail(Long skuId);
 
      BigDecimal get1010Price(Long skuId);
+
+    SkuInfo getDetailSkuInfo(Long skuId);
+
+    List<SkuImage> getDetailSkuImages(Long skuId);
 }

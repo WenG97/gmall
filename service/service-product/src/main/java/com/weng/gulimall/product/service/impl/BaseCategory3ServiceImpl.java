@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.weng.gulimall.model.product.BaseCategory2;
 import com.weng.gulimall.model.product.BaseCategory3;
+import com.weng.gulimall.model.to.CategoryViewTo;
 import com.weng.gulimall.product.service.BaseCategory3Service;
 import com.weng.gulimall.product.mapper.BaseCategory3Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,11 @@ public class BaseCategory3ServiceImpl extends ServiceImpl<BaseCategory3Mapper, B
     @Override
     public List<BaseCategory3> getCategory1Child(Long c2id) {
         return  baseCategory3Mapper.selectList(new LambdaQueryWrapper<BaseCategory3>().eq(BaseCategory3::getCategory2Id, c2id));
+    }
+
+    @Override
+    public CategoryViewTo getCategoryView(Long c3Id) {
+        return baseCategory3Mapper.getCategoryView(c3Id);
     }
 }
 

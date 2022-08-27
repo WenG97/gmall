@@ -18,6 +18,11 @@
     <artifactId>service</artifactId>
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+        </dependency>
         <!--依赖服务的工具类-->
         <dependency>
             <groupId>com.weng.gulimall</groupId>
