@@ -1,12 +1,15 @@
 package com.weng.gulimall.product.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.weng.gulimall.common.constant.SysRedisConst;
 import com.weng.gulimall.model.product.*;
 import com.weng.gulimall.model.to.CategoryViewTo;
 import com.weng.gulimall.model.to.SkuDetailTo;
 import com.weng.gulimall.product.mapper.BaseCategory3Mapper;
 import com.weng.gulimall.product.service.*;
 import com.weng.gulimall.product.mapper.SkuInfoMapper;
+import org.redisson.api.RBloomFilter;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +35,9 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo>
     private SkuAttrValueService skuAttrValueService;
     @Autowired
     private SkuSaleAttrValueService skuSaleAttrValueService;
+    @Autowired
+    private RedissonClient redissonClient;
+
     @Override
     public void savaSkuInfo(SkuInfo skuInfo) {
     //    1、sku基本信息
@@ -55,6 +61,8 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo>
             skuSaleAttrValue.setSpuId(skuInfo.getSpuId());
         }
         skuSaleAttrValueService.saveBatch(skuSaleAttrValueList);
+        RBloomFilter<Object> bloomFilter = redissonClient.getBloomFilter(SysRedisConst.BLOOM_SKUID);
+        bloomFilter.add(skuInfo.getId());
     }
 
     @Override
@@ -103,6 +111,12 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo>
     @Override
     public List<SkuImage> getDetailSkuImages(Long skuId) {
         return skuImageService.getSkuImage(skuId);
+    }
+
+    @Override
+    public List<Long> findAllSkuId() {
+
+        return baseMapper.getAllSkuId();
     }
 }
 

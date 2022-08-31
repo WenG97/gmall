@@ -4,7 +4,7 @@ package com.weng.gulimall.item.cache;
 public interface CacheOpsService {
     <T> T getCacheData(String cacheKey, Class<T> clz);
 
-    boolean bloomFilter(Long cacheKey);
+    boolean bloomContains(Long skuId);
 
     boolean tryLock(Long skuId);
 

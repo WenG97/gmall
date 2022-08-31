@@ -3,6 +3,7 @@ package com.weng.gulimall.item.cache.impl;
 import com.weng.gulimall.common.constant.SysRedisConst;
 import com.weng.gulimall.common.util.Jsons;
 import com.weng.gulimall.item.cache.CacheOpsService;
+import org.redisson.api.RBloomFilter;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ public class CacheOpsServiceImpl implements CacheOpsService {
 
     /**
      * 从缓存中获取数据,并且转成对应的类型
+     *
      * @param cacheKey
      * @param <T>
      * @return
@@ -40,9 +42,12 @@ public class CacheOpsServiceImpl implements CacheOpsService {
     }
 
     @Override
-    public boolean bloomFilter(Long cacheKey) {
-
-        return true;
+    public boolean bloomContains(Long skuId) {
+        RBloomFilter<Object> bloomFilter = redissonClient.getBloomFilter(SysRedisConst.BLOOM_SKUID);
+        if (bloomFilter.isExists()) {
+            return bloomFilter.contains(skuId);
+        }
+        return false;
     }
 
     @Override
@@ -54,10 +59,10 @@ public class CacheOpsServiceImpl implements CacheOpsService {
 
     @Override
     public void saveData(String cacheKey, Object obj) {
-        if (obj == null){
-        stringRedisTemplate.opsForValue().set(cacheKey,SysRedisConst.NULL_VAL,SysRedisConst.NULL_VAL_TTL, TimeUnit.SECONDS);
-        }else {
-        stringRedisTemplate.opsForValue().set(cacheKey,Jsons.toStr(obj),SysRedisConst.SKUDETAIL_VAL_TTL,TimeUnit.SECONDS);
+        if (obj == null) {
+            stringRedisTemplate.opsForValue().set(cacheKey, SysRedisConst.NULL_VAL, SysRedisConst.NULL_VAL_TTL, TimeUnit.SECONDS);
+        } else {
+            stringRedisTemplate.opsForValue().set(cacheKey, Jsons.toStr(obj), SysRedisConst.SKUDETAIL_VAL_TTL, TimeUnit.SECONDS);
         }
     }
 

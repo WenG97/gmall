@@ -5,6 +5,7 @@ import com.weng.gulimall.model.product.SkuInfo;
 import org.apache.ibatis.annotations.Param;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
 * @author lingzi
@@ -18,6 +19,7 @@ public interface SkuInfoMapper extends BaseMapper<SkuInfo> {
 
     BigDecimal get1010Price(@Param("skuId") Long skuId);
 
+    List<Long> getAllSkuId();
 }
 
 

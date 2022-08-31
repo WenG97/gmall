@@ -129,7 +129,7 @@ public class SkuDetailServiceImpl implements SkuDetailService {
         if (cacheData == null) {
             //3、如果缓存中没有，查询布隆过滤器,
             //4、判断布隆过滤器中有没有当前商品
-            if (!cacheOpsService.bloomFilter(skuId)) {
+            if (!cacheOpsService.bloomContains(skuId)) {
                 //5、如果布隆过滤器说数据库中没有当前数据，说明数据库确实没有，直接返回空
                 return null;
             }else {
