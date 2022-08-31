@@ -21,6 +21,9 @@ public class ItemController {
         Result<SkuDetailTo> result = skuDetailFeignClient.getSkuDetail(skuId);
         if (result.isOk()) {
             SkuDetailTo skuDetailTo = result.getData();
+            if (skuDetailTo ==null || skuDetailTo.getSkuInfo()==null){
+                return "item/404";
+            }
             //查询商品详情
             //1、商品的完整分类信息
             model.addAttribute("categoryView", skuDetailTo.getCategoryView());

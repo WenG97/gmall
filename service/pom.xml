@@ -54,6 +54,7 @@
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
 
+
         <!-- 服务注册 -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
