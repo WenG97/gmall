@@ -2,7 +2,6 @@ package com.weng.gulimall.item.service.impl;
 
 import com.weng.gulimall.common.constant.SysRedisConst;
 import com.weng.gulimall.common.result.Result;
-import com.weng.gulimall.item.cache.CacheOpsService;
 import com.weng.gulimall.item.feign.SkuDetailFeignClient;
 import com.weng.gulimall.item.service.SkuDetailService;
 import com.weng.gulimall.model.product.SkuImage;
@@ -10,8 +9,8 @@ import com.weng.gulimall.model.product.SkuInfo;
 import com.weng.gulimall.model.product.SpuSaleAttr;
 import com.weng.gulimall.model.to.CategoryViewTo;
 import com.weng.gulimall.model.to.SkuDetailTo;
+import com.weng.starter.cache.service.CacheOpsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;

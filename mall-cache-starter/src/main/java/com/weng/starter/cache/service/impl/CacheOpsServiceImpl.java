@@ -1,8 +1,11 @@
-package com.weng.gulimall.item.cache.impl;
+package com.weng.starter.cache.service.impl;
 
-import com.weng.gulimall.common.constant.SysRedisConst;
-import com.weng.gulimall.common.util.Jsons;
-import com.weng.gulimall.item.cache.CacheOpsService;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.weng.starter.cache.constant.SysRedisConst;
+import com.weng.starter.cache.service.CacheOpsService;
+import com.weng.starter.cache.utils.Jsons;
+import org.aspectj.lang.annotation.Aspect;
 import org.redisson.api.RBloomFilter;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -11,6 +14,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.lang.reflect.Type;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -42,6 +46,20 @@ public class CacheOpsServiceImpl implements CacheOpsService {
     }
 
     @Override
+    public Object getCacheData(String cacheKey, Type type) {
+        String s = stringRedisTemplate.opsForValue().get(cacheKey);
+        if (SysRedisConst.NULL_VAL.equals(s) || StringUtils.isEmpty(s)) {
+            return null;
+        }
+        return Jsons.toObj(s, new TypeReference<Object>() {
+            @Override
+            public Type getType() {
+                return type;
+            }
+        });
+    }
+
+    @Override
     public boolean bloomContains(Long skuId) {
         RBloomFilter<Object> bloomFilter = redissonClient.getBloomFilter(SysRedisConst.BLOOM_SKUID);
         if (bloomFilter.isExists()) {
@@ -51,9 +69,21 @@ public class CacheOpsServiceImpl implements CacheOpsService {
     }
 
     @Override
+    public boolean bloomContains(String bloomName, Object bVal) {
+        RBloomFilter<Object> bloomFilter = redissonClient.getBloomFilter(bloomName);
+        return bloomFilter.contains(bVal);
+    }
+
+    @Override
     public boolean tryLock(Long skuId) {
         String lockKey = SysRedisConst.LOCK_SKU_DETAIL + skuId;
         RLock lock = redissonClient.getLock(lockKey);
+        return lock.tryLock();
+    }
+
+    @Override
+    public boolean tryLock(String lockName) {
+        RLock lock = redissonClient.getLock(lockName);
         return lock.tryLock();
     }
 
@@ -70,6 +100,12 @@ public class CacheOpsServiceImpl implements CacheOpsService {
     public void unlock(Long skuId) {
         String lockKey = SysRedisConst.LOCK_SKU_DETAIL + skuId;
         RLock lock = redissonClient.getLock(lockKey);
+        lock.unlock();
+    }
+
+    @Override
+    public void unlock(String lockName) {
+        RLock lock = redissonClient.getLock(lockName);
         lock.unlock();
     }
 }
