@@ -1,4 +1,4 @@
-package com.weng.gulimall.web.feign;
+package com.weng.gulimall.feign.item;
 
 import com.weng.gulimall.common.result.Result;
 import com.weng.gulimall.model.to.SkuDetailTo;

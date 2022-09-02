@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Type;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -27,6 +29,10 @@ public class CacheOpsServiceImpl implements CacheOpsService {
     private RedissonClient redissonClient;
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+
+
+    //todo:可以封装在配置文件中
+    private ScheduledExecutorService scheduledExecutor = Executors.newScheduledThreadPool(4);
 
 
     /**
@@ -96,6 +102,15 @@ public class CacheOpsServiceImpl implements CacheOpsService {
         }
     }
 
+    public void saveData(String cacheKey, Object obj, Long dataTtl) {
+        if (obj == null) {
+            stringRedisTemplate.opsForValue().set(cacheKey, SysRedisConst.NULL_VAL, SysRedisConst.NULL_VAL_TTL, TimeUnit.SECONDS);
+        } else {
+            stringRedisTemplate.opsForValue().set(cacheKey, Jsons.toStr(obj), dataTtl, TimeUnit.SECONDS);
+        }
+    }
+
+
     @Override
     public void unlock(Long skuId) {
         String lockKey = SysRedisConst.LOCK_SKU_DETAIL + skuId;
@@ -107,5 +122,20 @@ public class CacheOpsServiceImpl implements CacheOpsService {
     public void unlock(String lockName) {
         RLock lock = redissonClient.getLock(lockName);
         lock.unlock();
+    }
+
+    /**
+     * 延迟双删
+     *
+     * @param cacheKey
+     */
+    @Override
+    public void delay2Delete(String cacheKey) {
+        stringRedisTemplate.delete(cacheKey);
+
+        //todo:可以使用redisson自带的任务调用api
+        scheduledExecutor.schedule(() -> {
+            stringRedisTemplate.delete(cacheKey);
+        },10,TimeUnit.SECONDS);
     }
 }

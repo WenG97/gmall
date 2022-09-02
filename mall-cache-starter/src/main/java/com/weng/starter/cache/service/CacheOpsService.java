@@ -6,6 +6,7 @@ import java.lang.reflect.Type;
 public interface CacheOpsService {
     /**
      * 从缓存获取json，并转换为一个普通对象
+     *
      * @param cacheKey
      * @param clz
      * @param <T>
@@ -15,6 +16,7 @@ public interface CacheOpsService {
 
     /**
      * 从缓存中获取json，并转换为复杂泛型对象
+     *
      * @param cacheKey
      * @param type
      * @return
@@ -25,29 +27,36 @@ public interface CacheOpsService {
 
     /**
      * 指定布隆过滤器里面是否包含指定值
+     *
      * @param bloomName
      * @param bVal
      * @return
      */
     boolean bloomContains(String bloomName, Object bVal);
 
-    boolean tryLock(Long skuId);
-
-    /**
-     *尝试加上指定的锁名
-     * @param lockName
-     * @return
-     */
-    boolean tryLock(String  lockName);
-
     void saveData(String cacheKey, Object obj);
+
+    void saveData(String cacheKey, Object obj, Long dataTtl);
+
+    boolean tryLock(Long skuId);
 
     void unlock(Long skuId);
 
     /**
+     * 尝试加上指定的锁名
+     *
+     * @param lockName
+     * @return
+     */
+    boolean tryLock(String lockName);
+
+    /**
      * 解指定的锁
+     *
      * @param lockName
      */
-    void unlock(String  lockName);
+    void unlock(String lockName);
+
+    void delay2Delete(String cacheKey);
 
 }

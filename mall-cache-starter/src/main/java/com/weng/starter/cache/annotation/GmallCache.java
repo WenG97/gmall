@@ -3,7 +3,7 @@ package com.weng.starter.cache.annotation;
 
 import java.lang.annotation.*;
 
-@Target({ElementType.TYPE})
+@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface GmallCache {
@@ -13,5 +13,7 @@ public @interface GmallCache {
 
     String bloomValue() default "";//获取布隆过滤器判断哪个值
 
-    String lockName() default "lock";
+    String lockName() default "";
+
+    long ttl() default 60*30L;
 }

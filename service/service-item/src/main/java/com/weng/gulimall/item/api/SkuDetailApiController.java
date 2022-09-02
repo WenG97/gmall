@@ -3,6 +3,7 @@ package com.weng.gulimall.item.api;
 import com.weng.gulimall.common.result.Result;
 import com.weng.gulimall.item.service.SkuDetailService;
 import com.weng.gulimall.model.to.SkuDetailTo;
+import feign.Retryer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

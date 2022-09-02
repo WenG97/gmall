@@ -1,8 +1,8 @@
 package com.weng.gulimall.web.controller;
 
 import com.weng.gulimall.common.result.Result;
+import com.weng.gulimall.feign.item.SkuDetailFeignClient;
 import com.weng.gulimall.model.to.SkuDetailTo;
-import com.weng.gulimall.web.feign.SkuDetailFeignClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

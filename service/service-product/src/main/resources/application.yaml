@@ -6,15 +6,7 @@ spring:
     username: root
     password: 123456
     driver-class-name: com.mysql.jdbc.Driver
-  redis:
-    port: 6379
-    host: 192.168.41.101
-    password: wg199710
 
-  zipkin:
-    base-url: http://192.168.41.101:9411/
-    sender:
-      type: web
 logging:
   level:
     root: error

@@ -1,13 +1,12 @@
 package com.weng.gulimall.item;
 
-import com.weng.gulimall.common.annotation.EnableAppRedisson;
 import com.weng.gulimall.common.annotation.EnableThreadPool;
 import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.client.SpringCloudApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @EnableThreadPool
-@EnableFeignClients
+@EnableFeignClients(basePackages = "com.weng.gulimall.feign.product")
 @SpringCloudApplication
 public class ItemMainApplication {
      public static void main(String[] args) {

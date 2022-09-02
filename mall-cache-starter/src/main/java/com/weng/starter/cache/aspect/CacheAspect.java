@@ -2,9 +2,9 @@ package com.weng.starter.cache.aspect;
 
 
 import com.weng.starter.cache.annotation.GmallCache;
+import com.weng.starter.cache.constant.SysRedisConst;
 import com.weng.starter.cache.service.CacheOpsService;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -16,6 +16,7 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.concurrent.TimeUnit;
 
@@ -69,7 +70,8 @@ public class CacheAspect {
                 if (lock) {
                     //分布式锁加成功，准备回源
                     result = joinPoint.proceed(joinPoint.getArgs());
-                    cacheOpsService.saveData(cacheKey, result);
+                    Long ttl = determineTtl(joinPoint);
+                    cacheOpsService.saveData(cacheKey, result,ttl);
                     return result;
                 } else {
                     TimeUnit.SECONDS.sleep(1);
@@ -83,6 +85,13 @@ public class CacheAspect {
         return result;
     }
 
+    private Long determineTtl(ProceedingJoinPoint joinPoint) {
+        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+        Method method = signature.getMethod();
+        GmallCache gmallCache = method.getDeclaredAnnotation(GmallCache.class);
+        return gmallCache.ttl();
+    }
+
     /**
      * 获取锁的名字
      *
@@ -92,8 +101,12 @@ public class CacheAspect {
     private String determineLockName(ProceedingJoinPoint joinPoint) {
         //1、拿到注解
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-        GmallCache gmallCache = signature.getMethod().getDeclaredAnnotation(GmallCache.class);
+        Method method = signature.getMethod();
+        GmallCache gmallCache = method.getDeclaredAnnotation(GmallCache.class);
         String expression = gmallCache.lockName();
+        if (StringUtils.isEmpty(expression)){
+            return SysRedisConst.LOCK_PREFIX +method.getName();
+        }
         return evaluationExpression(expression, joinPoint, String.class);
     }
 
@@ -134,8 +147,6 @@ public class CacheAspect {
     private Type getMethodGenericReturnType(ProceedingJoinPoint joinPoint) {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Type genericReturnType = signature.getMethod().getGenericReturnType();
-
-
         return genericReturnType;
     }
 

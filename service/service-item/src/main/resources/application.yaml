@@ -2,6 +2,8 @@ server:
   port: 9000
 
 spring:
+  main:
+    allow-bean-definition-overriding: true
   application:
     name: service-item
   autoconfigure:
@@ -15,6 +17,7 @@ spring:
     port: 6379
     host: 192.168.41.101
     password: wg199710
+
 app:
   thread-pool:
     corePoolSize: 4
