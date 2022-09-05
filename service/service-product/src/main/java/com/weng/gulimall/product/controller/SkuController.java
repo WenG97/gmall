@@ -54,13 +54,13 @@ public class SkuController {
 
     @GetMapping("cancelSale/{skuId}")
     public Result cancelSale(@PathVariable("skuId") Long skuId){
-        skuInfoService.updateSaleStatus(skuId,0);
+        skuInfoService.cancelSale(skuId,0);
         return Result.ok();
     }
 
     @GetMapping("onSale/{skuId}")
     public Result onSale(@PathVariable("skuId") Long skuId){
-        skuInfoService.updateSaleStatus(skuId,1);
+        skuInfoService.onSale(skuId,1);
         return Result.ok();
     }
 }

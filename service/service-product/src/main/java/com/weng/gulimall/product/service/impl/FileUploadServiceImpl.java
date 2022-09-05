@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.UUID;
 
 @Service
-public class FileUploadControllerImpl implements FileUploadService {
+public class FileUploadServiceImpl implements FileUploadService {
 
     @Autowired
     private MinioClient minioClient;

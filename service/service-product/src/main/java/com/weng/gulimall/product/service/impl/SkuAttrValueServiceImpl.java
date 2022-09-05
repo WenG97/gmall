@@ -1,10 +1,14 @@
 package com.weng.gulimall.product.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.weng.gulimall.model.list.SearchAttr;
 import com.weng.gulimall.model.product.SkuAttrValue;
 import com.weng.gulimall.product.service.SkuAttrValueService;
 import com.weng.gulimall.product.mapper.SkuAttrValueMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
 * @author lingzi
@@ -15,6 +19,14 @@ import org.springframework.stereotype.Service;
 public class SkuAttrValueServiceImpl extends ServiceImpl<SkuAttrValueMapper, SkuAttrValue>
     implements SkuAttrValueService{
 
+    @Autowired
+    private SkuAttrValueMapper skuAttrValueMapper;
+
+    @Override
+    public List<SearchAttr> getSkuAttrNameAndValue(Long skuId) {
+
+        return skuAttrValueMapper.getSkuAttrNameAndValue(skuId);
+    }
 }
 
 
