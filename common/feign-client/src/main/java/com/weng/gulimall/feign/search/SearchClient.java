@@ -2,6 +2,8 @@ package com.weng.gulimall.feign.search;
 
 import com.weng.gulimall.common.result.Result;
 import com.weng.gulimall.model.list.Goods;
+import com.weng.gulimall.model.vo.search.SearchParamVo;
+import com.weng.gulimall.model.vo.search.SearchResponseVo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,4 +16,7 @@ public interface SearchClient {
 
     @DeleteMapping("/delete/{skuId}")
     Result deleteGoods(@PathVariable("skuId") Long skuId);
+
+    @PostMapping("/goods/search")
+    Result<SearchResponseVo> search(SearchParamVo searchParamVo);
 }

@@ -6,7 +6,8 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @EnableFeignClients(basePackages = {
         "com.weng.gulimall.feign.item",
-        "com.weng.gulimall.feign.product"
+        "com.weng.gulimall.feign.product",
+        "com.weng.gulimall.feign.search"
 })
 @SpringCloudApplication
 public class WebMainApplication {
