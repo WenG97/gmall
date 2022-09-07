@@ -7,3 +7,9 @@ spring:
   elasticsearch:
     rest:
       uris: http://192.168.41.101:9200
+
+logging:
+  level:
+    tracer: trace #打开追踪器才能打开trace级别的日志
+    org.elasticsearch: trace
+#    com.weng.gulimall: trace

@@ -32,7 +32,7 @@ public class CacheOpsServiceImpl implements CacheOpsService {
 
 
     //todo:可以封装在配置文件中
-    private ScheduledExecutorService scheduledExecutor = Executors.newScheduledThreadPool(4);
+    private final ScheduledExecutorService scheduledExecutor = Executors.newScheduledThreadPool(4);
 
 
     /**

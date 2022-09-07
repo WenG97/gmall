@@ -13,7 +13,7 @@ public class SearchResponseVo {
     private SearchParamVo searchParam;
     //品牌面包屑
     private String trademarkParam;
-    //品牌属性面包屑
+    //平台属性面包屑
     private List<SearchAttr> propsParamList;
     //以上面包屑功能ok
 

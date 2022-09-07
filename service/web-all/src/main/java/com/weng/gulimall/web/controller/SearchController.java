@@ -30,7 +30,7 @@ public class SearchController {
         //排序信息
         model.addAttribute("orderMap",data.getOrderMap());
         //所有商品列表
-        model.addAttribute("goods",data.getGoods());
+        model.addAttribute("goodsList",data.getGoods());
         //分页信息
         model.addAttribute("pageNo",data.getPageNo());
         model.addAttribute("totalPages",data.getTotalPages());

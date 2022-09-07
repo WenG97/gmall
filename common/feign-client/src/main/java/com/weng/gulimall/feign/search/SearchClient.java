@@ -18,5 +18,5 @@ public interface SearchClient {
     Result deleteGoods(@PathVariable("skuId") Long skuId);
 
     @PostMapping("/goods/search")
-    Result<SearchResponseVo> search(SearchParamVo searchParamVo);
+    Result<SearchResponseVo> search(@RequestBody SearchParamVo searchParamVo);
 }

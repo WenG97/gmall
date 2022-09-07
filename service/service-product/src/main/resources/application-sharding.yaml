@@ -39,5 +39,6 @@ spring:
         load-balancers:
           round:
             type: ROUND_ROBIN
+
     props:
-      sql-show: true
+     sql-show: true
