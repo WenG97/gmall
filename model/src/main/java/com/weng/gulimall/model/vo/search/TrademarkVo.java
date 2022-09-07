@@ -7,5 +7,5 @@ public class TrademarkVo {
 
     private String tmLogoUrl;
     private String tmName;
-    private String tmId;
+    private Long tmId;
 }

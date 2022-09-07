@@ -53,7 +53,6 @@ public class SkuDetailServiceImpl implements SkuDetailService {
                     return skuInfo;
                 }, executor);
 
-
         //2、查询图片基本信息
         CompletableFuture<Void> imagesFuture =
                 skuInfoFuture.thenAcceptAsync(skuInfo -> {
