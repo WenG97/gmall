@@ -11,4 +11,6 @@ public interface GoodsService {
 
 
     SearchResponseVo search(SearchParamVo searchParamVo);
+
+    void updateHotscore(Long skuId, Long score);
 }

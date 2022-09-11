@@ -6,7 +6,8 @@ import org.springframework.cloud.client.SpringCloudApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @EnableThreadPool
-@EnableFeignClients(basePackages = "com.weng.gulimall.feign.product")
+@EnableFeignClients(basePackages = {"com.weng.gulimall.feign.product",
+        "com.weng.gulimall.feign.search"})
 @SpringCloudApplication
 public class ItemMainApplication {
      public static void main(String[] args) {

@@ -29,4 +29,5 @@ public class SysEsConst {
     public static final String AGG_ATTR_NAME_AGG = "attrNameAgg";
     public static final String NESTED_QUERY_PATH_ATTRS_ATTRNAME ="attrs.attrName";
     public static final String AGG_ATTR_VALUE_AGG = "attrValueAgg";
+    public static final String INDEX_GOODS = "goods";
 }

@@ -3,6 +3,7 @@ package com.weng.gulimall.item.service.impl;
 import com.weng.gulimall.common.result.Result;
 import com.weng.gulimall.feign.item.SkuDetailFeignClient;
 import com.weng.gulimall.feign.product.SkuProductFeignClient;
+import com.weng.gulimall.feign.search.SearchClient;
 import com.weng.gulimall.item.service.SkuDetailService;
 import com.weng.gulimall.model.product.SkuImage;
 import com.weng.gulimall.model.product.SkuInfo;
@@ -13,7 +14,10 @@ import com.weng.starter.cache.annotation.GmallCache;
 import com.weng.starter.cache.constant.SysRedisConst;
 import com.weng.starter.cache.service.CacheOpsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
+
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -31,6 +35,11 @@ public class SkuDetailServiceImpl implements SkuDetailService {
 
     @Autowired
     private CacheOpsService cacheOpsService;
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
+    @Autowired
+    private SearchClient searchClient;
+
 
 
     /**
@@ -56,14 +65,13 @@ public class SkuDetailServiceImpl implements SkuDetailService {
         //2、查询图片基本信息
         CompletableFuture<Void> imagesFuture =
                 skuInfoFuture.thenAcceptAsync(skuInfo -> {
-                    if (skuInfo==null){
+                    if (skuInfo == null) {
                         return;
                     }
                     Result<List<SkuImage>> skuImages =
                             skuDetailFeignClient.getSkuImages(skuId);
                     skuInfo.setSkuImageList(skuImages.getData());
                 }, executor);
-
 
         //3、查询商品实时价格
         CompletableFuture<Void> priceFuture =
@@ -77,7 +85,7 @@ public class SkuDetailServiceImpl implements SkuDetailService {
         //4、查询销售属性名值组合
         CompletableFuture<Void> saleAttrFuture =
                 skuInfoFuture.thenAcceptAsync(skuInfo -> {
-                    if (skuInfo==null){
+                    if (skuInfo == null) {
                         return;
                     }
                     Result<List<SpuSaleAttr>> skuSaleAttrValues =
@@ -88,7 +96,7 @@ public class SkuDetailServiceImpl implements SkuDetailService {
         //5、查询sku兄弟组合
         CompletableFuture<Void> skuValueFuture =
                 skuInfoFuture.thenAcceptAsync(skuInfo -> {
-                    if (skuInfo==null){
+                    if (skuInfo == null) {
                         return;
                     }
                     Result<String> skuValueJson =
@@ -99,7 +107,7 @@ public class SkuDetailServiceImpl implements SkuDetailService {
         //6、查询分类类目
         CompletableFuture<Void> categoryViewFuture =
                 skuInfoFuture.thenAcceptAsync(skuInfo -> {
-                    if (skuInfo==null){
+                    if (skuInfo == null) {
                         return;
                     }
                     Result<CategoryViewTo> categoryView =
@@ -118,7 +126,6 @@ public class SkuDetailServiceImpl implements SkuDetailService {
      * @param skuId
      * @return
      */
-
     public SkuDetailTo getSkuDetailNoCache(Long skuId) {
         //1、请求进来先查询缓存
         String cacheKey = SysRedisConst.SKU_INFO_PREFIX + skuId;
@@ -130,23 +137,23 @@ public class SkuDetailServiceImpl implements SkuDetailService {
             if (!cacheOpsService.bloomContains(skuId)) {
                 //5、如果布隆过滤器说数据库中没有当前数据，说明数据库确实没有，直接返回空
                 return null;
-            }else {
+            } else {
                 //6、如果布隆过滤器说数据库有数据，则数据库可能有,加锁查询数据库
-                if (cacheOpsService.tryLock(skuId)){
+                if (cacheOpsService.tryLock(skuId)) {
                     //拿到锁了,远程查询数据库
                     SkuDetailTo skuDetailRemote = getSkuDetailRemote(skuId);
-                    if (skuDetailRemote.getSkuInfo()==null){
-                        skuDetailRemote=null;
+                    if (skuDetailRemote.getSkuInfo() == null) {
+                        skuDetailRemote = null;
                     }
                     //8、添加缓存,然后返回
-                    cacheOpsService.saveData(cacheKey,skuDetailRemote);
+                    cacheOpsService.saveData(cacheKey, skuDetailRemote);
                     cacheOpsService.unlock(skuId);
                     return skuDetailRemote;
                 }
                 //没有拿到锁,睡一秒，直查缓存
                 try {
                     TimeUnit.SECONDS.sleep(1);
-                    return cacheOpsService.getCacheData(cacheKey,SkuDetailTo.class);
+                    return cacheOpsService.getCacheData(cacheKey, SkuDetailTo.class);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -157,11 +164,11 @@ public class SkuDetailServiceImpl implements SkuDetailService {
     }
 
     @Override
-    @GmallCache(cacheKey = SysRedisConst.SKU_INFO_PREFIX+"#{#params[0]}",
+    @GmallCache(cacheKey = SysRedisConst.SKU_INFO_PREFIX + "#{#params[0]}",
             bloomName = SysRedisConst.BLOOM_SKUID,
-            lockName = SysRedisConst.LOCK_SKU_DETAIL+"#{#params[0]}",
+            lockName = SysRedisConst.LOCK_SKU_DETAIL + "#{#params[0]}",
             bloomValue = "#{#params[0]}",
-            ttl = 60*60*24*7)
+            ttl = 60 * 60 * 24 * 7)
     public SkuDetailTo getSkuDetail(Long skuId) {
         // //1、请求进来先查询缓存
         // String cacheKey = SysRedisConst.SKU_INFO_PREFIX + skuId;
@@ -199,6 +206,14 @@ public class SkuDetailServiceImpl implements SkuDetailService {
         // //2、如果缓存中有数据，则直接返回
 
         return getSkuDetailRemote(skuId);
+    }
+
+    @Override
+    public void updateHotscore(Long skuId) {
+        Long increment = redisTemplate.opsForValue().increment(SysRedisConst.SKU_HOTSCORE_PREFIX + skuId);
+        if (increment % 100 == 0) {
+           searchClient.addHotscore(skuId, increment);
+        }
     }
 
 }

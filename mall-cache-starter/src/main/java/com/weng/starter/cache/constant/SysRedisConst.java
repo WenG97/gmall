@@ -11,4 +11,5 @@ public class SysRedisConst {
     public static final Long SKUDETAIL_VAL_TTL = 60 * 60 * 24 * 7L;
     public static final String BLOOM_SKUID = "bloom:skuid";
     public static final String LOCK_PREFIX = "lock:";
+    public static final String SKU_HOTSCORE_PREFIX = "sku:hotscore:";
 }

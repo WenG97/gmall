@@ -33,17 +33,16 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.data.elasticsearch.core.document.Document;
 import org.springframework.data.elasticsearch.core.mapping.IndexCoordinates;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.Query;
+import org.springframework.data.elasticsearch.core.query.UpdateQuery;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -83,6 +82,17 @@ public class GoodsServiceImpl implements GoodsService {
 
         //3、转换查询到的数据，然后封装为SearchResponseVo
         return buildSearchResponseResult(goods, searchParamVo);
+    }
+
+    @Override
+    public void updateHotscore(Long skuId, Long score) {
+        Map<String,Long> map = new HashMap<>(1);
+        map.put(SysEsConst.ORDER_FIELD_HOTSCORE,score);
+        UpdateQuery updateQuery = UpdateQuery.builder(skuId.toString())
+                .withDocument(Document.from(map))
+                .build();
+
+        esRestTemplate.update(updateQuery,IndexCoordinates.of(SysEsConst.INDEX_GOODS));
     }
 
 

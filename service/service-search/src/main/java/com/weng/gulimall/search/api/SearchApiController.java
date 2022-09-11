@@ -1,6 +1,7 @@
 package com.weng.gulimall.search.api;
 
 import com.weng.gulimall.common.result.Result;
+import com.weng.gulimall.feign.search.SearchClient;
 import com.weng.gulimall.model.list.Goods;
 import com.weng.gulimall.model.vo.search.SearchParamVo;
 import com.weng.gulimall.model.vo.search.SearchResponseVo;
@@ -42,5 +43,18 @@ public class SearchApiController {
     public Result<SearchResponseVo> search(@RequestBody SearchParamVo searchParamVo){
         SearchResponseVo res = goodsService.search(searchParamVo);
         return Result.ok(res);
+    }
+
+
+    /**
+     * 增加es的热度分
+     * @param skuId
+     * @return
+     */
+    @GetMapping("/goods/hotscore/{skuId}")
+    public Result addHotscore(@PathVariable("skuId")Long skuId,
+                              @RequestParam("score") Long score){
+        goodsService.updateHotscore(skuId,score);
+        return Result.ok();
     }
 }

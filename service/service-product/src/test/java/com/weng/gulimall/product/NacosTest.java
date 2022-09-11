@@ -1,10 +1,23 @@
 package com.weng.gulimall.product;
 
+import com.weng.gulimall.model.to.SkuDetailTo;
+import io.swagger.models.auth.In;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.util.Base64Utils;
 
+import java.lang.ref.WeakReference;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @SpringBootTest
 public class NacosTest {
@@ -17,32 +30,24 @@ public class NacosTest {
     //     System.out.println("aa = " + aa);
     // }
 
-   static Object obj = new Object();
-   static Object aObj = new Object();
+    static Object obj = new Object();
+    static Object aObj = new Object();
 
-    public static void main(String[] args) {
-
-        new Thread(()->{
-            product();
-        }).start();
-
-
-        new Thread(()->{
-            try {
-                TimeUnit.SECONDS.sleep(1);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            consumer();
-        }).start();
-
-        try {
-            TimeUnit.SECONDS.sleep(1000000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
+    public static void main(String[] args) throws InterruptedException {
+        List<Object> a = new ArrayList<>();
+        a.add(1);
+        a.add(2);
+        a.add(13);
+        a.add(14);
+        a.add(61);
+        a.add(17);
+        a.add(15);
+        a.add(17);
+        a.add(81);
+        Base64.Encoder encoder = Base64.getEncoder();
+        Base64.Decoder decoder = Base64.getDecoder();
     }
+
 
     private static void product() {
         synchronized (obj) {
@@ -57,8 +62,8 @@ public class NacosTest {
         }
     }
 
-    private static void consumer(){
-        synchronized (obj){
+    private static void consumer() {
+        synchronized (obj) {
             System.out.println("consumer-1");
             obj.notify();
             System.out.println("consumer-2");

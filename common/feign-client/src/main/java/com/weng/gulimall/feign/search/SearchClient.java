@@ -19,4 +19,7 @@ public interface SearchClient {
 
     @PostMapping("/goods/search")
     Result<SearchResponseVo> search(@RequestBody SearchParamVo searchParamVo);
+
+    @GetMapping("/goods/hotscore/{skuId}")
+     Result addHotscore(@PathVariable("skuId")Long skuId,@RequestParam("score")Long score);
 }
