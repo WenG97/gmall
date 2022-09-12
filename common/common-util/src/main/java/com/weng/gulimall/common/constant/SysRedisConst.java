@@ -11,4 +11,8 @@ public class SysRedisConst {
     public static final Long SKUDETAIL_VAL_TTL = 60 * 60 * 24 * 7L;
     public static final String BLOOM_SKUID = "bloom:skuid";
     public static final String USER_LOGIN = "user:login";
+    public static final String REQUEST_TOKEN = "token";
+    public static final String USERID_HEADER = "userid";
+    public static final String COOKIE_DOMAIN = ".gmall.com";
+    public static final String USERTEMPID_HEADER = "usertempid";
 }

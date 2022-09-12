@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class LoginController {
 
     @GetMapping("login.html")
-    public String loginPage(@RequestParam("originUrl")String originUrl,
+    public String loginPage(@RequestParam(value = "originUrl",required = false,defaultValue = "http://gmall.com/")String originUrl,
                             Model model){
         model.addAttribute("originUrl",originUrl);
 
