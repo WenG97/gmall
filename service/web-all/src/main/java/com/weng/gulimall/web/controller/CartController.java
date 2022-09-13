@@ -1,6 +1,5 @@
 package com.weng.gulimall.web.controller;
 
-import com.weng.gulimall.common.constant.SysRedisConst;
 import com.weng.gulimall.common.result.Result;
 import com.weng.gulimall.feign.cart.CartFeignClient;
 import com.weng.gulimall.model.product.SkuInfo;
@@ -8,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
@@ -36,5 +34,22 @@ public class CartController {
         model.addAttribute("skuNum",skuNum);
 
         return "cart/addCart";
+    }
+
+    /**
+     * 购物车列表页
+     * @return
+     */
+    @GetMapping("/cart.html")
+    public String cartHtml(){
+
+        return "cart/index";
+    }
+
+
+    @GetMapping("/cart/deleteChecked")
+    public String deleteChecked(){
+        cartFeignClient.deleteChecked();
+        return "redirect:http://cart.gmall.com/cart.html";
     }
 }

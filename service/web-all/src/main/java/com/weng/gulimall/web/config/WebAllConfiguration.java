@@ -1,6 +1,5 @@
 package com.weng.gulimall.web.config;
 
-import com.baomidou.mybatisplus.extension.api.R;
 import com.weng.gulimall.common.constant.SysRedisConst;
 import feign.RequestInterceptor;
 import org.springframework.context.annotation.Bean;

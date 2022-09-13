@@ -16,6 +16,7 @@ import org.springframework.http.*;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
@@ -23,6 +24,11 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.Temporal;
+import java.util.Date;
 
 @Component
 public class GlobalAuthFilter implements GlobalFilter {
@@ -43,8 +49,7 @@ public class GlobalAuthFilter implements GlobalFilter {
      * @return Mono<Void>
      */
     @Override
-    public Mono<Void> filter(ServerWebExchange exchange,
-                             GatewayFilterChain chain) {
+    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 
         //1、前置拦截
         String path = exchange.getRequest().getURI().getPath();
@@ -234,20 +239,5 @@ public class GlobalAuthFilter implements GlobalFilter {
         return exchange.getRequest().getHeaders().getFirst(SysRedisConst.REQUEST_TOKEN);
     }
 
-    // public static void main(String[] args) {
-    //
-    //     Mono<Integer> in = null;
-    //     try {
-    //         in = getIn();
-    //     } catch (InterruptedException e) {
-    //         e.printStackTrace();
-    //     }
-    //     Flux<Integer> flux = in.flux();
-    //     flux.subscribe(System.out::println);
-    //     flux.
-    // }
-    // static Mono<Integer> getIn() throws InterruptedException {
-    //     TimeUnit.SECONDS.sleep(2);
-    //     return Mono.just(5);
-    // }
+
 }

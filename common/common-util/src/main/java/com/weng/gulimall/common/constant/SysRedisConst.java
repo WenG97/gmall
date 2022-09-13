@@ -15,4 +15,5 @@ public class SysRedisConst {
     public static final String USERID_HEADER = "userid";
     public static final String COOKIE_DOMAIN = ".gmall.com";
     public static final String USERTEMPID_HEADER = "usertempid";
+    public static final String CART_KEY = "cart:user:";
 }
