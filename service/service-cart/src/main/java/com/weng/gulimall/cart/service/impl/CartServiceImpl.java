@@ -137,7 +137,6 @@ public class CartServiceImpl implements CartService {
     @Override
     public List<CartInfo> getCartList(String cartKey) {
         //将购物车中的价格进行更新
-
         BoundHashOperations<String, String, String> cartHash = redisTemplate.boundHashOps(cartKey);
         // redisTemplate.
         List<CartInfo> collect = cartHash.values().stream()
@@ -292,7 +291,7 @@ public class CartServiceImpl implements CartService {
                 String userCartKey = SysRedisConst.CART_KEY + currentAuthInfo.getUserId();
                 Long size = redisTemplate.boundHashOps(userCartKey).size();
 
-                List<String> deleteIds = new ArrayList<>();
+                List<String> deleteIds = new ArrayList<>(tempCartList.size());
                 for (CartInfo cartInfo : tempCartList) {
                     Long skuId = cartInfo.getSkuId();
                     Integer skuNum = cartInfo.getSkuNum();

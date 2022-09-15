@@ -6,7 +6,6 @@ import com.weng.gulimall.model.user.UserInfo;
 import com.weng.gulimall.model.vo.user.LoginSuccessVo;
 import com.weng.gulimall.user.service.UserInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +23,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/passport/login")
-    public Result login(@RequestBody UserInfo userInfo){
+    public Result<Object> login(@RequestBody UserInfo userInfo){
 
         LoginSuccessVo loginSuccessVo = userInfoService.login(userInfo);
         if (!ObjectUtils.isEmpty(loginSuccessVo)){
@@ -35,7 +34,7 @@ public class UserController {
     }
 
     @GetMapping("/passport/logout")
-    public Result logout(@RequestHeader("token") String token){
+    public Result<Object> logout(@RequestHeader("token") String token){
         userInfoService.logout(token);
         return Result.ok();
     }

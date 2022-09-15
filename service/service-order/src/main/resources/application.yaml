@@ -1,0 +1,12 @@
+server:
+  port: 13001
+
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+    username: root
+    password: 123456
+    url: jdbc:mysql://192.168.41.101:3306/gmall_order?useSSL=false&characterEncoding=utf-8
+  profiles:
+    include: sharding

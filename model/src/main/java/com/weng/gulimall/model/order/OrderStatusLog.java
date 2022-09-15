@@ -15,7 +15,10 @@ import java.util.Date;
 public class OrderStatusLog extends BaseEntity {
    
    private static final long serialVersionUID = 1L;
-   
+
+   @TableField("user_id")
+   private Long userId;
+
    @ApiModelProperty(value = "orderId")
    @TableField("order_id")
    private Long orderId;

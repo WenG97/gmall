@@ -24,7 +24,10 @@ import java.util.Date;
 public class PaymentInfo extends BaseEntity {
 	
 	private static final long serialVersionUID = 1L;
-	
+
+	@TableField("user_id")
+	private Long userId;
+
 	@ApiModelProperty(value = "对外业务编号")
 	@TableField("out_trade_no")
 	private String outTradeNo;
