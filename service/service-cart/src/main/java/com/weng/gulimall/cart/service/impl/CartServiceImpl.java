@@ -1,19 +1,10 @@
 package com.weng.gulimall.cart.service.impl;
 
-import java.math.BigDecimal;
-
-import com.google.common.collect.Lists;
-
-import java.sql.Timestamp;
-import java.util.*;
-import java.util.stream.Collectors;
-
 import com.weng.gulimall.cart.service.CartService;
 import com.weng.gulimall.common.auth.AuthUtils;
 import com.weng.gulimall.common.constant.SysCommonConst;
 import com.weng.gulimall.common.constant.SysRedisConst;
 import com.weng.gulimall.common.execption.GmallException;
-import com.weng.gulimall.common.result.Result;
 import com.weng.gulimall.common.result.ResultCodeEnum;
 import com.weng.gulimall.common.util.Jsons;
 import com.weng.gulimall.feign.product.SkuProductFeignClient;
@@ -24,9 +15,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
+
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.stream.Collectors;
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -37,6 +33,8 @@ public class CartServiceImpl implements CartService {
     @Autowired
     private SkuProductFeignClient skuProductFeignClient;
 
+    @Autowired
+    private ThreadPoolExecutor threadPoolExecutor;
 
     @Override
     public SkuInfo addToCart(Long skuId, Integer num) {
@@ -46,18 +44,12 @@ public class CartServiceImpl implements CartService {
         return addItemToCart(skuId, num, cartKey);
     }
 
-    /**
-     * 把指定商品添加到购物车
-     *
-     * @param skuId skuId
-     * @param num   num
-     * @return SkuInfo
-     */
     @Override
     public SkuInfo addItemToCart(Long skuId, Integer num, String cartKey) {
 
         BoundHashOperations<String, String, String> cartKeyHash = redisTemplate.boundHashOps(cartKey);
 
+        // cartKeyHash.size()
         if (!cartKeyHash.hasKey(skuId.toString())) {
             //1、如果购物车之前没有这个商品,则直接将cartInfo添加倒reids中
             //从数据库中查询当前skuId的商品信息
@@ -65,6 +57,9 @@ public class CartServiceImpl implements CartService {
             if (ObjectUtils.isEmpty(skuInfo)) {
                 throw new GmallException(ResultCodeEnum.NO_SKUNIFO);
             }
+            Long size = cartKeyHash.size();
+            if (size>=SysRedisConst.CART_ITEMS_LIMIT)
+                throw new GmallException(ResultCodeEnum.CART_OVERFLOW);
             //将skuInfo转换为购物车中保存的数据模型
             CartInfo cartInfo = converSkuInfo2CartInfo(skuInfo);
             cartInfo.setSkuId(skuId);
@@ -141,13 +136,52 @@ public class CartServiceImpl implements CartService {
      */
     @Override
     public List<CartInfo> getCartList(String cartKey) {
+        //将购物车中的价格进行更新
+
         BoundHashOperations<String, String, String> cartHash = redisTemplate.boundHashOps(cartKey);
+        // redisTemplate.
         List<CartInfo> collect = cartHash.values().stream()
                 .map(str -> Jsons.toObj(str, CartInfo.class))
                 .sorted(Comparator.comparing(CartInfo::getCreateTime))
                 .collect(Collectors.toList());
         Collections.reverse(collect);
+
+        updateAllCartItemPrice(cartKey,collect);
         return collect;
+    }
+
+    /**
+     * 更新购物车中所有商品的价格
+     * @param cartKey
+     */
+    @Override
+    public void updateAllCartItemPrice(String cartKey,List<CartInfo> cartInfoList ) {
+        BoundHashOperations<String, String, String> cartHash = redisTemplate.boundHashOps(cartKey);
+        //保存价格被修改了skuId 和 cartInfo
+        Map<String,String> updateCartInfo = new HashMap<>(cartInfoList.size());
+        //1、更新每个商品的实时价格
+        cartInfoList.forEach(o->{
+            BigDecimal price = skuProductFeignClient.getSku1010Price(o.getSkuId()).getData();
+            if (ObjectUtils.isEmpty(price)){
+                //如果没有价格，说明当前sku已经被删除,从购物车中删除
+                cartHash.delete(o.getSkuId());
+                cartInfoList.remove(o);
+            }else {
+                if (!o.getSkuPrice().equals(price)) {
+                    //价格变了，则修改价格,保证显示给用户的和数据库的一致
+                    o.setSkuPrice(price);
+                    o.setUpdateTime(new Date());
+                    updateCartInfo.put(o.getSkuId().toString(),Jsons.toStr(o));
+                }
+            }
+        });
+        if(!ObjectUtils.isEmpty(updateCartInfo)){
+            //如果map不为空，说明有商品的价格被修改，则异步修改购物车
+            //可以添加线程池
+            CompletableFuture.runAsync(() -> {
+                cartHash.putAll(updateCartInfo);
+            },threadPoolExecutor);
+        }
     }
 
     /**
@@ -163,7 +197,7 @@ public class CartServiceImpl implements CartService {
         CartInfo cartInfo = getItemFromCart(cartKey, skuId);
         cartInfo.setSkuNum(cartInfo.getSkuNum() + num);
         cartInfo.setUpdateTime(new Date());
-        cartHash.put(skuId.toString(), Jsons.toStr(cartHash));
+        cartHash.put(skuId.toString(), Jsons.toStr(cartInfo));
     }
 
     /**
@@ -179,7 +213,7 @@ public class CartServiceImpl implements CartService {
         CartInfo cartInfo = getItemFromCart(cartKey, skuId);
         cartInfo.setIsChecked(status);
         cartInfo.setUpdateTime(new Date());
-        cartHash.put(skuId.toString(), Jsons.toStr(cartHash));
+        cartHash.put(skuId.toString(), Jsons.toStr(cartInfo));
     }
 
     /**
@@ -225,7 +259,6 @@ public class CartServiceImpl implements CartService {
     }
 
 
-
     /**
      * 判断当前用户登录没登录，根据状态获取临时id或者用户id
      *
@@ -254,20 +287,23 @@ public class CartServiceImpl implements CartService {
                 !StringUtils.isEmpty(currentAuthInfo.getUserTempId())) {
             //合并购物车
             String tempCartKey = SysRedisConst.CART_KEY + currentAuthInfo.getUserTempId();
-            List<CartInfo> tempCartList = getCartList(currentAuthInfo.getUserTempId());
-            if (!ObjectUtils.isEmpty(tempCartList)){
+            List<CartInfo> tempCartList = getCartList(tempCartKey);
+            if (!ObjectUtils.isEmpty(tempCartList)) {
+                String userCartKey = SysRedisConst.CART_KEY + currentAuthInfo.getUserId();
+                Long size = redisTemplate.boundHashOps(userCartKey).size();
+
+                List<String> deleteIds = new ArrayList<>();
                 for (CartInfo cartInfo : tempCartList) {
                     Long skuId = cartInfo.getSkuId();
                     Integer skuNum = cartInfo.getSkuNum();
-                    String userCartKey = SysRedisConst.CART_KEY + currentAuthInfo.getUserId();
-
-                    //todo 优化一下合并逻辑,同时优化 商品种类和单个商品数量的限制
-
-                    // addItemToCart();
+                    if (size++ > SysRedisConst.CART_ITEMS_LIMIT) {
+                        throw new GmallException(ResultCodeEnum.CART_OVERFLOW);
+                    }
+                    addItemToCart(skuId, skuNum, userCartKey);
+                    deleteIds.add(skuId.toString());
                 }
+                redisTemplate.boundHashOps(tempCartKey).delete(deleteIds.toArray());
             }
-            while (!redisTemplate.delete(tempCartKey)){}
-
         }
         return determinCartKey();
     }

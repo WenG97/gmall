@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface CartFeignClient {
 
     @GetMapping("/addToCart")
-    Result<SkuInfo> addToCart(@RequestParam("skuId")Long skuId, @RequestParam("num")Integer num);
+    Result<Object> addToCart(@RequestParam("skuId")Long skuId, @RequestParam("num")Integer num);
 
     @GetMapping("/deleteChecked")
     Result deleteChecked();

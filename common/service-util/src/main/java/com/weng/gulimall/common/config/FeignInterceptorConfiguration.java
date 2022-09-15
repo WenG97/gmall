@@ -1,4 +1,4 @@
-package com.weng.gulimall.web.config;
+package com.weng.gulimall.common.config;
 
 import com.weng.gulimall.common.constant.SysRedisConst;
 import feign.RequestInterceptor;
@@ -10,7 +10,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 
 @Configuration
-public class WebAllConfiguration {
+public class FeignInterceptorConfiguration {
+
 
     //添加openfeign的拦截器，给feign的请求设置userId进入到头信息
     @Bean
@@ -18,7 +19,7 @@ public class WebAllConfiguration {
 
         return (requestTemplate -> {
             //通过spring的监听器获取到 原生的servlet请求属性，获取到请求，获取到头信息
-            ServletRequestAttributes requestAttributes = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
+            ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             HttpServletRequest request = requestAttributes.getRequest();
             String userId = request.getHeader(SysRedisConst.USERID_HEADER);
             //透传用户id
@@ -28,4 +29,5 @@ public class WebAllConfiguration {
             requestTemplate.header(SysRedisConst.USERTEMPID_HEADER,tempId);
         });
     }
+
 }

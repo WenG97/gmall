@@ -29,7 +29,9 @@ public enum ResultCodeEnum {
     COUPON_GET(220, "优惠券已经领取"),
     COUPON_LIMIT_GET(221, "优惠券已发放完毕"),
     LOGIN_ERROR(2081, "账号密码错误"),
-    NO_SKUNIFO(2300, "没有当前商品的信息");
+    NO_SKUNIFO(2300, "没有当前商品的信息"),
+    CART_OVERFLOW(3000,"购物车中商品总数超限，请移除部分商品再添加" ),
+    CART_ITEM_SKUNUM_OVERFLOW(3001,"单个商品不允许超过200个，请重新操作");
 
     private Integer code;
 

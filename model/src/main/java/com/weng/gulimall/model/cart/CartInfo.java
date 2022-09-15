@@ -1,5 +1,8 @@
 package com.weng.gulimall.model.cart;
 
+import com.weng.gulimall.common.constant.SysRedisConst;
+import com.weng.gulimall.common.execption.GmallException;
+import com.weng.gulimall.common.result.ResultCodeEnum;
 import com.weng.gulimall.model.activity.CouponInfo;
 import com.weng.gulimall.model.base.BaseEntity;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -31,6 +34,20 @@ public class CartInfo extends BaseEntity {
     @ApiModelProperty(value = "数量")
     @TableField("sku_num")
     private Integer skuNum;
+
+    public void setSkuNum(Integer skuNum) {
+        if (skuNum > SysRedisConst.CART_ITEMS_NUM_LIMT) {
+            throw new GmallException(ResultCodeEnum.CART_ITEM_SKUNUM_OVERFLOW);
+        }
+        this.skuNum = skuNum;
+    }
+
+    // public void setSkuNum(Integer skuNum){
+    //     if (skuNum > 200) {
+    //         throw new GmallException(ResultCodeEnum.CART_ITEM_SKUNUM_OVERFLOW);
+    //     }
+    //     this.skuNum = skuNum;
+    // }
 
     @ApiModelProperty(value = "图片文件")
     @TableField("img_url")

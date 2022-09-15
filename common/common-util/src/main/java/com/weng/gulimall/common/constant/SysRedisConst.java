@@ -16,4 +16,6 @@ public class SysRedisConst {
     public static final String COOKIE_DOMAIN = ".gmall.com";
     public static final String USERTEMPID_HEADER = "usertempid";
     public static final String CART_KEY = "cart:user:";
+    public static final Long CART_ITEMS_LIMIT = 2L;
+    public static final Integer CART_ITEMS_NUM_LIMT = 200;
 }

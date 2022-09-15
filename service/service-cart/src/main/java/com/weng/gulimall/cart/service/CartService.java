@@ -42,6 +42,8 @@ public interface CartService {
 
     List<CartInfo> getCheckedItems();
 
+    void updateAllCartItemPrice(String cartKey,List<CartInfo> cartInfoList);
+
     String mergeUserAndTempCart();
 
 }

@@ -35,7 +35,7 @@ public class CacheAspect {
 
     @Around("@annotation(com.weng.starter.cache.annotation.GmallCache)")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
-        Object result = null;
+        Object result ;
         //先查缓存
         //1、不同方法需要查询的缓存不一样
         String cacheKey = determineCacheKey(joinPoint);

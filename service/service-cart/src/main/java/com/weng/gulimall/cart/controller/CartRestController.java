@@ -29,9 +29,10 @@ public class CartRestController {
     public Result<List<CartInfo>> cartList() {
         // String cartKey = cartService.determinCartKey();
         //其实合并key应该在用户登录后后，使用异步合并，或者消息中间件合并
-            String cartKey = cartService.mergeUserAndTempCart();
+        String cartKey = cartService.mergeUserAndTempCart();
         //获取购物车中的所有商品
         List<CartInfo> cartInfoList = cartService.getCartList(cartKey);
+
         return Result.ok(cartInfoList);
     }
 
@@ -50,11 +51,11 @@ public class CartRestController {
         return Result.ok();
     }
 
-    @GetMapping("/check/{skuId}/{status}")
+    @GetMapping("/checkCart/{skuId}/{status}")
     public Result check(@PathVariable("skuId") Long skuId,
                         @PathVariable("status") Integer status) {
 
-        cartService.updateChecked(skuId,status);
+        cartService.updateChecked(skuId, status);
         return Result.ok();
     }
 

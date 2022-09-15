@@ -18,37 +18,43 @@ public class CartController {
 
     /**
      * 添加商品到购物车
-     * @param skuId skuId
+     *
+     * @param skuId  skuId
      * @param skuNum skuNum
-     * @param model model
+     * @param model  model
      * @return String
      */
     @GetMapping("/addCart.html")
-    public String addCartHtml(@RequestParam("skuId")Long skuId,
+    public String addCartHtml(@RequestParam("skuId") Long skuId,
                               @RequestParam("skuNum") Integer skuNum,
-                              Model model){
+                              Model model) {
 
         //把指定商品添加到购物车
-        Result<SkuInfo> result = cartFeignClient.addToCart(skuId, skuNum);
-        model.addAttribute("skuInfo",result.getData());
-        model.addAttribute("skuNum",skuNum);
-
-        return "cart/addCart";
+        Result<Object> result = cartFeignClient.addToCart(skuId, skuNum);
+        if (result.isOk()) {
+            model.addAttribute("skuInfo", result.getData());
+            model.addAttribute("skuNum", skuNum);
+            return "cart/addCart";
+        } else {
+            model.addAttribute("errorMsg:", result.getMessage());
+            return "cart/error";
+        }
     }
 
     /**
      * 购物车列表页
+     *
      * @return
      */
     @GetMapping("/cart.html")
-    public String cartHtml(){
+    public String cartHtml() {
 
         return "cart/index";
     }
 
 
     @GetMapping("/cart/deleteChecked")
-    public String deleteChecked(){
+    public String deleteChecked() {
         cartFeignClient.deleteChecked();
         return "redirect:http://cart.gmall.com/cart.html";
     }
