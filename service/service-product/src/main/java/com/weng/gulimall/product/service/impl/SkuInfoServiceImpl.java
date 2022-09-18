@@ -115,7 +115,7 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfo>
         goods.setCategory3Id(categoryView.getCategory3Id());
         goods.setCategory3Name(categoryView.getCategory3Name());
 
-        goods.setHotScore(0L);//todo :热度更新
+        goods.setHotScore(0L);
         List<SearchAttr> attrs = skuAttrValueService.getSkuAttrNameAndValue(skuId);
         goods.setAttrs(attrs);
 

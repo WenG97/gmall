@@ -4,6 +4,7 @@ import com.weng.gulimall.cart.service.CartService;
 import com.weng.gulimall.common.auth.AuthUtils;
 import com.weng.gulimall.common.constant.SysRedisConst;
 import com.weng.gulimall.common.result.Result;
+import com.weng.gulimall.model.cart.CartInfo;
 import com.weng.gulimall.model.product.SkuInfo;
 import com.weng.gulimall.model.vo.user.UserAuthInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
@@ -52,6 +54,11 @@ private RedisTemplate<String,String> redisTemplate;
     public Result deleteChecked(){
         cartService.deleteChecked();
         return Result.ok();
+    }
+
+    @GetMapping("/checked/list")
+    public Result<List<CartInfo>> getChecked(){
+        return Result.ok(cartService.getCheckedItems());
     }
 
 }

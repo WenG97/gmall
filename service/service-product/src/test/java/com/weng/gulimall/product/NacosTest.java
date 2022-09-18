@@ -22,6 +22,7 @@ import java.util.stream.Stream;
 @SpringBootTest
 public class NacosTest {
 
+    int a = 6;
     // @Value("${aaa}")
     // String aa;
     //
@@ -30,45 +31,45 @@ public class NacosTest {
     //     System.out.println("aa = " + aa);
     // }
 
-    static Object obj = new Object();
-    static Object aObj = new Object();
-
-    public static void main(String[] args) throws InterruptedException {
-        List<Object> a = new ArrayList<>();
-        a.add(1);
-        a.add(2);
-        a.add(13);
-        a.add(14);
-        a.add(61);
-        a.add(17);
-        a.add(15);
-        a.add(17);
-        a.add(81);
-        Base64.Encoder encoder = Base64.getEncoder();
-        Base64.Decoder decoder = Base64.getDecoder();
-    }
-
-
-    private static void product() {
-        synchronized (obj) {
-            try {
-                System.out.println("product-1");
-                obj.wait();
-                System.out.println("执行结束");
-                System.out.println("product-2");
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private static void consumer() {
-        synchronized (obj) {
-            System.out.println("consumer-1");
-            obj.notify();
-            System.out.println("consumer-2");
-        }
-    }
+    // static Object obj = new Object();
+    // static Object aObj = new Object();
+    //
+    // public static void main(String[] args) throws InterruptedException {
+    //     List<Object> a = new ArrayList<>();
+    //     a.add(1);
+    //     a.add(2);
+    //     a.add(13);
+    //     a.add(14);
+    //     a.add(61);
+    //     a.add(17);
+    //     a.add(15);
+    //     a.add(17);
+    //     a.add(81);
+    //     Base64.Encoder encoder = Base64.getEncoder();
+    //     Base64.Decoder decoder = Base64.getDecoder();
+    // }
+    //
+    //
+    // private static void product() {
+    //     synchronized (obj) {
+    //         try {
+    //             System.out.println("product-1");
+    //             obj.wait();
+    //             System.out.println("执行结束");
+    //             System.out.println("product-2");
+    //         } catch (InterruptedException e) {
+    //             e.printStackTrace();
+    //         }
+    //     }
+    // }
+    //
+    // private static void consumer() {
+    //     synchronized (obj) {
+    //         System.out.println("consumer-1");
+    //         obj.notify();
+    //         System.out.println("consumer-2");
+    //     }
+    // }
 
 
 }

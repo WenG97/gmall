@@ -2,18 +2,12 @@ package com.weng.gulimall.common.auth;
 
 import com.weng.gulimall.common.constant.SysRedisConst;
 import com.weng.gulimall.model.vo.user.UserAuthInfo;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
-import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.stream.Collectors;
 
 public class AuthUtils {
 

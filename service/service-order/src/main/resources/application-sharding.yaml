@@ -1,14 +1,14 @@
 spring:
   shardingsphere:
     props:
-     sql-show: true
+      sql-show: true
 
-#    先让sharding 管理六个数据源
+    #    先让sharding 管理六个数据源
 
     datasource:
       names: order_0_m,order_0_s1,order_0_s2,order_1_m,order_1_s1,order_1_s2
 
-#      order 0主库
+      #      order 0主库
       order_0_m:
         type: com.zaxxer.hikari.HikariDataSource
         driver-class-name: com.mysql.jdbc.Driver
@@ -30,7 +30,7 @@ spring:
         password: 123456
         url: jdbc:mysql://192.168.41.101:3308/gmall_order_0?useSSL=false&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
 
-#       order1的主库
+      #       order1的主库
       order_1_m:
         type: com.zaxxer.hikari.HikariDataSource
         driver-class-name: com.mysql.jdbc.Driver
@@ -53,7 +53,7 @@ spring:
         url: jdbc:mysql://192.168.41.101:3308/gmall_order_1?useSSL=false&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
 
     rules:
-#      读写分离配置
+      #      读写分离配置
       readwrite-splitting:
         data-sources:
           order0ds: #逻辑数据源
@@ -86,8 +86,8 @@ spring:
         #指定具有绑定关系的表
         #不说绑定关系，会分别计算查哪个库的哪个表
         binding-tables:
-            - order_info,order_detail
-            - order_info,order_status_log
+          - order_info,order_detail
+          - order_info,order_status_log
 
         #定义分表规则:定义每个逻辑表是怎么对应真实表的,$->{} 动态取值
         tables:
@@ -175,11 +175,4 @@ spring:
           snow:
             type: SNOWFLAKE
             props:
-              work-id: ${random.int(1000))}
-
-
-
-
-
-
-
+              work-id: $->{random.int(1000))}

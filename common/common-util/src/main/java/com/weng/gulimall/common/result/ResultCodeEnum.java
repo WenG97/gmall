@@ -31,7 +31,10 @@ public enum ResultCodeEnum {
     LOGIN_ERROR(2081, "账号密码错误"),
     NO_SKUNIFO(2300, "没有当前商品的信息"),
     CART_OVERFLOW(3000,"购物车中商品总数超限，请移除部分商品再添加" ),
-    CART_ITEM_SKUNUM_OVERFLOW(3001,"单个商品不允许超过200个，请重新操作");
+    CART_ITEM_SKUNUM_OVERFLOW(3001,"单个商品不允许超过200个，请重新操作"),
+    CHECKED_ITEMS(40002,"请先选中商品" ),
+    TOKEN_INVALID(4004,"页面已过期，请重新刷洗" ), ORDER_NO_STOCK(4001, "此商品库存不足："),
+    ORDER_PRICE_CHANGED(4002, "该商品价格发生变化，请刷新页面重试");
 
     private Integer code;
 

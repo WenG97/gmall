@@ -10,3 +10,5 @@ spring:
     url: jdbc:mysql://192.168.41.101:3306/gmall_order?useSSL=false&characterEncoding=utf-8
   profiles:
     include: sharding
+  main:
+    allow-bean-definition-overriding: true

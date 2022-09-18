@@ -29,16 +29,21 @@ spring:
           predicates:
             - Path=/api/user/**
 
+
         - id: cart_route
           uri: lb://service-cart
           predicates:
             - Path=/api/cart/**
 
+        - id: order_route
+          uri: lb://service-order
+          predicates:
+            - Path=/api/order/**
+
         - id: web-all-route
           uri: lb://web-all
           predicates:
             - Host=**.gmall.com
-
 
 app:
   auth:
@@ -49,7 +54,8 @@ app:
       - /login.html
       - /api/user/passport/login
     login-auth-url:
-      - /order/**
+      - /api/**/auth/**
+      - /trade.html
     deny-url:
       - /api/inner/**
     login-page: http://passport.gmall.com/login.html

@@ -38,6 +38,6 @@ class Pointer {
     //在一个缓存行中，如果有一个线程在读取a时，会顺带把b带出
      long a;  //需要volatile，保证线程间可见并避免重排序
     //    放开下面这行，解决伪共享的问题，提高了性能
- // long p1, p2, p3, p4, p5, p6, p7;
-     long b;   //需要volatile，保证线程间可见并避免重排序
+ long p1, p2, p3, p4, p5, p6, p7;
+      long b;   //需要volatile，保证线程间可见并避免重排序
 }

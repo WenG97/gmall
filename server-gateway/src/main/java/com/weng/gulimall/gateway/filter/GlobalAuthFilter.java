@@ -163,7 +163,8 @@ public class GlobalAuthFilter implements GlobalFilter {
                 .header(SysRedisConst.USERTEMPID_HEADER, userTempId)
                 .build();
         // return exchange;
-        return exchange.mutate().request(newRequest).build();
+        exchange.mutate().request(newRequest).build();
+        return exchange;
     }
 
     /**

@@ -6,12 +6,7 @@ import org.springframework.cloud.client.SpringCloudApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @EnableFeignInterceptor
-@EnableFeignClients(basePackages = {
-        "com.weng.gulimall.feign.item",
-        "com.weng.gulimall.feign.product",
-        "com.weng.gulimall.feign.search",
-        "com.weng.gulimall.feign.cart"
-})
+@EnableFeignClients(basePackages = {"com.weng.gulimall.feign"})
 @SpringCloudApplication
 public class WebMainApplication {
      public static void main(String[] args) {
