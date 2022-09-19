@@ -2,13 +2,16 @@ package com.weng.gulimall.order;
 
 import com.weng.gulimall.common.annotation.EnableAutoExceptionHandler;
 import com.weng.gulimall.common.annotation.EnableFeignInterceptor;
+import com.weng.gulimall.common.annotation.EnableThreadPool;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.client.SpringCloudApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 
-
+@EnableThreadPool
+@EnableTransactionManagement
 @EnableAutoExceptionHandler
 @EnableFeignInterceptor
 @EnableFeignClients({"com.weng.gulimall.feign.cart"

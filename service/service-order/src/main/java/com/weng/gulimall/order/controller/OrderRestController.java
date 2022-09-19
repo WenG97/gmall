@@ -14,10 +14,10 @@ public class OrderRestController {
     private OrderBizService orderBizService;
 
     @PostMapping("/submitOrder")
-    public Result submitOrder(@RequestBody OrderSubmitVo orderSubmitVo,
+    public Result<String> submitOrder(@RequestBody OrderSubmitVo orderSubmitVo,
                               @RequestParam("tradeNo") String tradeNo){
         Long orderID = orderBizService.submitOrder(tradeNo,orderSubmitVo);
 
-        return Result.ok(orderID);
+        return Result.ok(orderID.toString());
     }
 }

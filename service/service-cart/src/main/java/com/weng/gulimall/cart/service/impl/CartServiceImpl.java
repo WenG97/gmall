@@ -167,7 +167,7 @@ public class CartServiceImpl implements CartService {
                 cartInfoList.remove(o);
             }else {
                 if (!o.getSkuPrice().equals(price)) {
-                    //价格变了，则修改价格,保证显示给用户的和数据库的一致
+                    //价格变了，则修改价格,同时保证显示给用户的和数据库的一致
                     o.setSkuPrice(price);
                     o.setUpdateTime(new Date());
                     updateCartInfo.put(o.getSkuId().toString(),Jsons.toStr(o));

@@ -19,11 +19,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -45,6 +45,9 @@ public class OrderBizServiceImpl implements OrderBizService {
     private RedisTemplate<String, String> redisTemplate;
     @Autowired
     private OrderInfoService orderInfoService;
+
+    @Autowired
+    ThreadPoolExecutor executor;
 
     /**
      * 获取订单确认页需要的数据
@@ -164,7 +167,9 @@ public class OrderBizServiceImpl implements OrderBizService {
             }
         }
         //保存数据库
-
-        return orderInfoService.savaOrder(orderSubmitVo,tradeNo);
+        Long orderId = orderInfoService.savaOrder(orderSubmitVo, tradeNo);
+        //清除购物车中 被选中的数据
+        cartFeignClient.deleteChecked();
+        return orderId;
     }
 }
