@@ -47,7 +47,7 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
      * 根据页面提提交的内容生成一个数据库的订单id
      *
      * @param orderSubmitVo orderSubmitVo
-     * @return
+     * @return Long
      */
     @Transactional
     @Override

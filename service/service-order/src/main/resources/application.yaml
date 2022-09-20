@@ -13,17 +13,4 @@ spring:
   main:
     allow-bean-definition-overriding: true
 
-  rabbitmq:
-    username: admin
-    password: admin
-    host: 192.168.41.101
-    port: 5672
-    virtual-host: /
-    publisher-returns: true
-    publisher-confirm-type: simple
-    listener:
-      type: simple
-      simple:
-        acknowledge-mode: manual
-        batch-size: 12
 

@@ -1,5 +1,6 @@
 package com.weng.gulimall.order;
 
+import com.weng.gulimall.annotation.EnableAppRabbit;
 import com.weng.gulimall.common.annotation.EnableAutoExceptionHandler;
 import com.weng.gulimall.common.annotation.EnableFeignInterceptor;
 import com.weng.gulimall.common.annotation.EnableThreadPool;
@@ -10,6 +11,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 
+@EnableAppRabbit
 @EnableThreadPool
 @EnableTransactionManagement
 @EnableAutoExceptionHandler
