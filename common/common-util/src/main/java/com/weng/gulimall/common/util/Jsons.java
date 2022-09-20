@@ -2,6 +2,7 @@ package com.weng.gulimall.common.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.amqp.core.Message;
 import org.springframework.util.StringUtils;
 
 /**
@@ -44,5 +45,17 @@ public class Jsons {
         } catch (JsonProcessingException e) {
             return null;
         }
+    }
+
+    /**
+     * 把mq消息内容 转换成指定对象
+     * @param message
+     * @param orderMsgClass
+     * @param <T>
+     * @return
+     */
+    public static <T> T toObj(Message message, Class<T> orderMsgClass) {
+        String json = new String(message.getBody());
+        return toObj(json,orderMsgClass);
     }
 }

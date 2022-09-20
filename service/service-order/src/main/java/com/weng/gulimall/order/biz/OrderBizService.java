@@ -17,4 +17,6 @@ public interface OrderBizService {
     boolean checkTradeNo(String tradeNo);
 
     Long submitOrder(String tradeNo, OrderSubmitVo orderSubmitVo);
+
+    void closeOrder(Long orderId, Long userId);
 }

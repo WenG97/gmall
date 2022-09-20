@@ -6,6 +6,8 @@ import com.weng.gulimall.common.auth.AuthUtils;
 import com.weng.gulimall.common.config.threadpool.AppThreadPoolAutoConfiguration;
 import com.weng.gulimall.common.constant.SysCommonConst;
 import com.weng.gulimall.common.constant.SysRedisConst;
+import com.weng.gulimall.common.util.Jsons;
+import com.weng.gulimall.constant.MqConst;
 import com.weng.gulimall.model.activity.CouponInfo;
 import com.google.common.collect.Lists;
 
@@ -21,10 +23,12 @@ import com.weng.gulimall.model.enums.OrderStatus;
 import com.weng.gulimall.model.enums.ProcessStatus;
 import com.weng.gulimall.model.order.OrderDetail;
 import com.weng.gulimall.model.order.OrderInfo;
+import com.weng.gulimall.model.to.mq.OrderMsg;
 import com.weng.gulimall.model.vo.order.OrderSubmitVo;
 import com.weng.gulimall.order.service.OrderDetailService;
 import com.weng.gulimall.order.service.OrderInfoService;
 import com.weng.gulimall.order.mapper.OrderInfoMapper;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,9 +43,11 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         implements OrderInfoService {
 
 
-
     @Autowired
     private OrderDetailService orderDetailService;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     /**
      * 根据页面提提交的内容生成一个数据库的订单id
@@ -61,16 +67,38 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         List<OrderDetail> orderDetails = prepareOrderDetail(orderSubmitVo, orderInfo);
         //2.1、保存订单详情
         orderDetailService.saveBatch(orderDetails);
-        //3清除购物车中选中的商品
+
+        //创建订单完成，发送消息到交换机，准备延迟关单
+        OrderMsg orderMsg = new OrderMsg(orderInfo.getId(), orderInfo.getUserId());
+        rabbitTemplate.convertAndSend(MqConst.EXCHANGE_ORDER_EVENT,
+                MqConst.RK_ORDER_CREATED,
+                Jsons.toStr(orderMsg));
 
         //返回id,基于mp的自动填充机制
         return orderInfo.getId();
     }
 
     /**
+     * 幂等修改关单
+     *
+     * @param orderId
+     * @param userId
+     * @param closed
+     * @param expected
+     */
+    @Override
+    public void changeOrderStatus(Long orderId, Long userId, ProcessStatus closed, List<ProcessStatus> expected) {
+        String orderStatus = closed.getOrderStatus().name();
+        String processStatus = closed.name();
+        //todo ：修订订单的状态，完成关单操作
+        baseMapper.updateOrderStatus();
+    }
+
+    /**
      * 封装订单信息详情数据
+     *
      * @param orderSubmitVo orderSubmitVo
-     * @param orderInfo orderInfo
+     * @param orderInfo     orderInfo
      * @return
      */
     private List<OrderDetail> prepareOrderDetail(OrderSubmitVo orderSubmitVo, OrderInfo orderInfo) {

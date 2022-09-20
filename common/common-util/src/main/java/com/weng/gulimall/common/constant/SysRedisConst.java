@@ -19,4 +19,5 @@ public class SysRedisConst {
     public static final Long CART_ITEMS_LIMIT = 200L;
     public static final Integer CART_ITEMS_NUM_LIMT = 200;
     public static final String ORDER_TRADE_TOKEN = "order:tradeNo:";
+    public static final String MQ_RETRY = "mq:message:";
 }

@@ -5,16 +5,21 @@ import com.weng.gulimall.common.constant.SysRedisConst;
 import com.weng.gulimall.common.execption.GmallException;
 import com.weng.gulimall.common.result.Result;
 import com.weng.gulimall.common.result.ResultCodeEnum;
+import com.weng.gulimall.common.util.Jsons;
+import com.weng.gulimall.constant.MqConst;
 import com.weng.gulimall.feign.cart.CartFeignClient;
 import com.weng.gulimall.feign.product.SkuProductFeignClient;
 import com.weng.gulimall.feign.user.UserFeignClient;
 import com.weng.gulimall.feign.ware.WareFeignClient;
 import com.weng.gulimall.model.cart.CartInfo;
+import com.weng.gulimall.model.enums.ProcessStatus;
+import com.weng.gulimall.model.to.mq.OrderMsg;
 import com.weng.gulimall.model.vo.order.CartInfoVo;
 import com.weng.gulimall.model.vo.order.OrderConfirmDataVo;
 import com.weng.gulimall.model.vo.order.OrderSubmitVo;
 import com.weng.gulimall.order.biz.OrderBizService;
 import com.weng.gulimall.order.service.OrderInfoService;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
@@ -48,6 +53,7 @@ public class OrderBizServiceImpl implements OrderBizService {
 
     @Autowired
     ThreadPoolExecutor executor;
+
 
     /**
      * 获取订单确认页需要的数据
@@ -168,8 +174,21 @@ public class OrderBizServiceImpl implements OrderBizService {
         }
         //保存数据库
         Long orderId = orderInfoService.savaOrder(orderSubmitVo, tradeNo);
+
         //清除购物车中 被选中的数据
         cartFeignClient.deleteChecked();
         return orderId;
+    }
+
+    /**
+     * 关闭延迟未支付的订单
+     * @param orderId
+     * @param userId
+     */
+    @Override
+    public void closeOrder(Long orderId, Long userId) {
+        //如果订单的状态是已支付 或者 是已结束才可以关单
+        List<ProcessStatus> expected = Arrays.asList(ProcessStatus.UNPAID,ProcessStatus.FINISHED)
+        orderInfoService.changeOrderStatus(orderId,userId, ProcessStatus.CLOSED,expected);
     }
 }
