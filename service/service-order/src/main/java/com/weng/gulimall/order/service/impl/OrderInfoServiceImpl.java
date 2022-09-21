@@ -79,7 +79,7 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
     }
 
     /**
-     * 幂等修改关单
+     * 幂等修改订单状态来关单
      *
      * @param orderId
      * @param userId
@@ -90,8 +90,12 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
     public void changeOrderStatus(Long orderId, Long userId, ProcessStatus closed, List<ProcessStatus> expected) {
         String orderStatus = closed.getOrderStatus().name();
         String processStatus = closed.name();
-        //todo ：修订订单的状态，完成关单操作
-        baseMapper.updateOrderStatus();
+        List<String> expectStatus = expected.stream()
+                .map(ProcessStatus::name)
+                .collect(Collectors.toList());
+
+        //幂等修订订单的状态，完成关单操作
+        baseMapper.updateOrderStatus(orderId, userId,processStatus,orderStatus,expectStatus);
     }
 
     /**

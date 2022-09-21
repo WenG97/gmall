@@ -44,6 +44,14 @@ public class CartServiceImpl implements CartService {
         return addItemToCart(skuId, num, cartKey);
     }
 
+    /**
+     *
+     * 添加商品到购物车
+     * @param skuId
+     * @param num
+     * @param cartKey
+     * @return
+     */
     @Override
     public SkuInfo addItemToCart(Long skuId, Integer num, String cartKey) {
 

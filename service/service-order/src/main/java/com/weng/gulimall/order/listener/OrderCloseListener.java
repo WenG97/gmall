@@ -34,10 +34,13 @@ public class OrderCloseListener {
         OrderMsg orderMsg = Jsons.toObj(message, OrderMsg.class);
 
         try {
+            log.info("监听到关闭订单的业务{}，正在关闭", orderMsg);
             //2、进行关单业务逻辑,注意保证幂等性
-            orderBizService.closeOrder(orderMsg.getOrderId(),orderMsg.getUserId());
+            orderBizService.closeOrder(orderMsg.getOrderId(), orderMsg.getUserId());
+            log.info("{}号的订单，关闭成功", orderMsg);
             channel.basicAck(deliveryTag, false);
         } catch (Exception e) {
+
             log.error("订单业务关闭失败，消息{}，失败原因：{}", orderMsg, e);
             Long increment = redisTemplate.opsForValue().increment(SysRedisConst.MQ_RETRY + "order" + orderMsg.getOrderId());
             if (increment < 5) {
