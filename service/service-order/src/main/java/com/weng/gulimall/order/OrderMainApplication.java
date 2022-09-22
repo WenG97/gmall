@@ -4,26 +4,29 @@ import com.weng.gulimall.annotation.EnableAppRabbit;
 import com.weng.gulimall.common.annotation.EnableAutoExceptionHandler;
 import com.weng.gulimall.common.annotation.EnableFeignInterceptor;
 import com.weng.gulimall.common.annotation.EnableThreadPool;
+import com.weng.gulimall.feign.ware.callback.WareFeignClientCallBack;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.client.SpringCloudApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 
+@Import(WareFeignClientCallBack.class)
 @EnableAppRabbit
 @EnableThreadPool
 @EnableTransactionManagement
 @EnableAutoExceptionHandler
 @EnableFeignInterceptor
-@EnableFeignClients({"com.weng.gulimall.feign.cart"
+    @EnableFeignClients({"com.weng.gulimall.feign.cart"
         , "com.weng.gulimall.feign.user",
         "com.weng.gulimall.feign.product",
         "com.weng.gulimall.feign.ware"})
 @MapperScan("com.weng.gulimall.order.mapper")
 @SpringCloudApplication
 public class OrderMainApplication {
-     public static void main(String[] args) {
-             SpringApplication.run(OrderMainApplication.class,args);
-         }
+    public static void main(String[] args) {
+        SpringApplication.run(OrderMainApplication.class, args);
+    }
 }

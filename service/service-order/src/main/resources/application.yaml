@@ -12,5 +12,6 @@ spring:
     include: sharding
   main:
     allow-bean-definition-overriding: true
-
-
+feign:
+  sentinel:
+    enabled: true

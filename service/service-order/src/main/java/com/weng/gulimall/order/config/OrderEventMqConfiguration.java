@@ -57,7 +57,7 @@ public class OrderEventMqConfiguration {
 
 
     /**
-     * 死单duil
+     * 死单队列
      */
     @Bean
     public Queue orderDeadQueue(){
@@ -76,6 +76,26 @@ public class OrderEventMqConfiguration {
         return BindingBuilder.bind(queue)
                 .to(exchange)
                 .with(MqConst.RK_ORDER_DEAD)
+                .noargs();
+    }
+
+    /**
+     * 支付成功的订单队列
+     */
+    @Bean
+    public Queue payedQueue(){
+        return QueueBuilder.durable(MqConst.QUEUE_ORDER_PAYED).build();
+    }
+
+    /**
+     * 支付成功队列绑定订单交换机
+     */
+    @Bean
+    public Binding payedQueueBinding(@Qualifier("payedQueue") Queue queue,
+                                     @Qualifier("orderExchange") Exchange exchange){
+        return BindingBuilder.bind(queue)
+                .to(exchange)
+                .with(MqConst.RK_ORDER_PAYED)
                 .noargs();
     }
 }

@@ -32,7 +32,11 @@ public class DateUtil {
     public static String formatDate(Date date) {
         SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
         return sdf.format(date);
+    }
 
+    public static String formatDate(Date date,String patter){
+        SimpleDateFormat sdf = new SimpleDateFormat(patter);
+        return sdf.format(date);
     }
 
     /**

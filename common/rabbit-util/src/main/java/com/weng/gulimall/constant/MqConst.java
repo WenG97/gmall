@@ -10,4 +10,6 @@ public class MqConst {
     public static final String RK_ORDER_DEAD = "order.dead";
     public static final String RK_ORDER_CREATED = "order.created";
     public static final String QUEUE_ORDER_DEAD = "order-dead-queue";
+    public static final String RK_ORDER_PAYED = "order.payed";
+    public static final String QUEUE_ORDER_PAYED = "order-payed-queue";
 }

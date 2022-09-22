@@ -43,8 +43,6 @@ public class OrderBizServiceImpl implements OrderBizService {
     private RedisTemplate<String, String> redisTemplate;
     @Autowired
     private OrderInfoService orderInfoService;
-    @Autowired
-    private ThreadPoolExecutor executor;
 
 
     /**

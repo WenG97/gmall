@@ -2,6 +2,7 @@ package com.weng.gulimall.order.service.impl;
 
 import java.math.BigDecimal;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.weng.gulimall.common.auth.AuthUtils;
 import com.weng.gulimall.common.config.threadpool.AppThreadPoolAutoConfiguration;
 import com.weng.gulimall.common.constant.SysCommonConst;
@@ -83,19 +84,36 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
      *
      * @param orderId
      * @param userId
-     * @param closed
-     * @param expected
+     * @param whileChange 将会把该订单修改为此状态
+     * @param expected 期望原来的状态
      */
+    @Transactional
     @Override
-    public void changeOrderStatus(Long orderId, Long userId, ProcessStatus closed, List<ProcessStatus> expected) {
-        String orderStatus = closed.getOrderStatus().name();
-        String processStatus = closed.name();
+    public void changeOrderStatus(Long orderId, Long userId, ProcessStatus whileChange, List<ProcessStatus> expected) {
+        String orderStatus = whileChange.getOrderStatus().name();
+        String processStatus = whileChange.name();
         List<String> expectStatus = expected.stream()
                 .map(ProcessStatus::name)
                 .collect(Collectors.toList());
 
         //幂等修订订单的状态，完成关单操作
-        baseMapper.updateOrderStatus(orderId, userId,processStatus,orderStatus,expectStatus);
+        baseMapper.updateOrderStatus(orderId, userId, processStatus, orderStatus, expectStatus);
+    }
+
+    /**
+     * 根据追踪号和用户id查询订单信息
+     *
+     * @param outTradeNo
+     * @param userId
+     * @return
+     */
+    @Override
+    public OrderInfo getOrderInfoByTradeAndUserId(String outTradeNo, Long userId) {
+
+        return baseMapper.selectOne(new LambdaQueryWrapper<OrderInfo>()
+                .eq(OrderInfo::getUserId, userId)
+                .eq(OrderInfo::getOutTradeNo, outTradeNo));
+
     }
 
     /**

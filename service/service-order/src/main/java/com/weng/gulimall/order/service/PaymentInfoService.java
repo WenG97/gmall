@@ -4,6 +4,8 @@ package com.weng.gulimall.order.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.weng.gulimall.model.payment.PaymentInfo;
 
+import java.util.Map;
+
 /**
 * @author lingzi
 * @description 针对表【payment_info(支付信息表)】的数据库操作Service
@@ -11,4 +13,5 @@ import com.weng.gulimall.model.payment.PaymentInfo;
 */
 public interface PaymentInfoService extends IService<PaymentInfo> {
 
+    PaymentInfo savaPaymentInfo(Map<String, String> params);
 }
