@@ -1,6 +1,7 @@
 package com.weng.gulimall.common.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.amqp.core.Message;
 import org.springframework.util.StringUtils;
@@ -32,6 +33,26 @@ public class Jsons {
         }
     }
 
+
+    /**
+     * 带复杂泛型的json转换为复杂泛型的对象，且兼容Class
+     * @param str
+     * @param tr
+     * @param <T>
+     * @return
+     */
+    public static <T> T toObj(String str, TypeReference<T> tr ){
+        if (StringUtils.isEmpty(str)){
+            return null;
+        }
+        try {
+            T t = objectMapper.readValue(str, tr);
+            return t;
+        } catch (JsonProcessingException e) {
+            return null;
+        }
+
+    }
 
     /**
      * 将对象转为json字符串

@@ -37,7 +37,7 @@ public class SearchApiController {
     /**
      * 商品检索
      * @param searchParamVo 商品检索条件
-     * @return
+     * @return Result
      */
     @PostMapping("/goods/search")
     public Result<SearchResponseVo> search(@RequestBody SearchParamVo searchParamVo){
@@ -48,8 +48,8 @@ public class SearchApiController {
 
     /**
      * 增加es的热度分
-     * @param skuId
-     * @return
+     * @param skuId skuId
+     * @return  Result
      */
     @GetMapping("/goods/hotscore/{skuId}")
     public Result addHotscore(@PathVariable("skuId")Long skuId,

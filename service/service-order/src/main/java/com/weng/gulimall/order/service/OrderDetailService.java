@@ -2,6 +2,10 @@ package com.weng.gulimall.order.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.weng.gulimall.model.order.OrderDetail;
+import com.weng.gulimall.model.order.OrderInfo;
+import com.weng.gulimall.model.to.mq.WareDeduceSkuInfo;
+
+import java.util.List;
 
 /**
 * @author lingzi
@@ -10,4 +14,7 @@ import com.weng.gulimall.model.order.OrderDetail;
 */
 public interface OrderDetailService extends IService<OrderDetail> {
 
+    List<WareDeduceSkuInfo> prepareWareDeduceSkuInfo(Long id, Long userId);
+
+    List<OrderDetail> getOrderDetails(OrderInfo parentOrderInfo);
 }

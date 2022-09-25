@@ -44,6 +44,8 @@ public class PaymentInfoServiceImpl extends ServiceImpl<PaymentInfoMapper, Payme
         String outTradeNo = params.get("out_trade_no");
         String userId = outTradeNo.substring(outTradeNo.lastIndexOf("_") + 1);
         //1、新增操作，保存到数据库之前，保证幂等性
+        //2、先从数据库中获取，如果有了则不新增，保证幂等性，
+        //3、也可以使用mysql的唯一键约束来保证幂等性
         PaymentInfo info = getOne(new LambdaQueryWrapper<PaymentInfo>()
                 .eq(PaymentInfo::getUserId, Long.parseLong(userId))
                 .eq(PaymentInfo::getOutTradeNo, outTradeNo));

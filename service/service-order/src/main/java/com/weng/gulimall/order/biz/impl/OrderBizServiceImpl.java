@@ -1,20 +1,28 @@
 package com.weng.gulimall.order.biz.impl;
 
+import com.weng.gulimall.model.activity.CouponInfo;
+import com.google.common.collect.Lists;
+
+import java.util.Date;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.weng.gulimall.common.auth.AuthUtils;
 import com.weng.gulimall.common.constant.SysRedisConst;
 import com.weng.gulimall.common.execption.GmallException;
 import com.weng.gulimall.common.result.Result;
 import com.weng.gulimall.common.result.ResultCodeEnum;
+import com.weng.gulimall.common.util.Jsons;
 import com.weng.gulimall.feign.cart.CartFeignClient;
 import com.weng.gulimall.feign.product.SkuProductFeignClient;
 import com.weng.gulimall.feign.user.UserFeignClient;
 import com.weng.gulimall.feign.ware.WareFeignClient;
 import com.weng.gulimall.model.cart.CartInfo;
 import com.weng.gulimall.model.enums.ProcessStatus;
-import com.weng.gulimall.model.vo.order.CartInfoVo;
-import com.weng.gulimall.model.vo.order.OrderConfirmDataVo;
-import com.weng.gulimall.model.vo.order.OrderSubmitVo;
+import com.weng.gulimall.model.order.OrderDetail;
+import com.weng.gulimall.model.order.OrderInfo;
+import com.weng.gulimall.model.vo.order.*;
 import com.weng.gulimall.order.biz.OrderBizService;
+import com.weng.gulimall.order.service.OrderDetailService;
 import com.weng.gulimall.order.service.OrderInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -24,7 +32,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -44,6 +52,8 @@ public class OrderBizServiceImpl implements OrderBizService {
     @Autowired
     private OrderInfoService orderInfoService;
 
+    @Autowired
+    private OrderDetailService orderDetailService;
 
     /**
      * 获取订单确认页需要的数据
@@ -181,5 +191,131 @@ public class OrderBizServiceImpl implements OrderBizService {
         //如果订单的状态是已支付 或者 是已结束才可以关单
         List<ProcessStatus> expected = Arrays.asList(ProcessStatus.UNPAID, ProcessStatus.FINISHED);
         orderInfoService.changeOrderStatus(orderId, userId, ProcessStatus.CLOSED, expected);
+    }
+
+    /**
+     * 拆单
+     *
+     * @param vo
+     * @return
+     */
+    @Override
+    public List<WareChildOrderVo> orderSplit(OrderWareMapVo vo) {
+        //todo :拆单完成
+        //父订单ID
+        Long parentOrderId = vo.getOrderId();
+        OrderInfo parentOrderInfo = orderInfoService.getById(parentOrderId);
+        List<OrderDetail> details = orderDetailService.getOrderDetails(parentOrderInfo);
+        parentOrderInfo.setOrderDetailList(details);
+        //===================以上，父订单信息准备好了==================
+        //获取子订单的组合
+        String wareSkuMap = vo.getWareSkuMap();
+
+        List<WareMapItem> wareMapItems = Jsons.toObj(wareSkuMap, new TypeReference<List<WareMapItem>>() {
+        });
+        List<OrderInfo> splitOrders = wareMapItems.stream()
+                .map(o -> saveChildOrderInfo(o, parentOrderInfo))
+                .collect(Collectors.toList());
+
+       return convertSplitOrdersToWareChildOrderVo(splitOrders);
+    }
+
+    /**
+     * 将订单拆分后的信息进行封装返回
+     * @param splitOrders
+     * @return
+     */
+    private List<WareChildOrderVo> convertSplitOrdersToWareChildOrderVo(List<OrderInfo> splitOrders) {
+
+        return splitOrders.stream()
+                .map(orderInfo->{
+                    WareChildOrderVo wareChildOrderVo = new WareChildOrderVo();
+                    wareChildOrderVo.setOrderId(orderInfo.getId());
+                    wareChildOrderVo.setConsignee(orderInfo.getConsignee());
+                    wareChildOrderVo.setConsigneeTel(orderInfo.getConsigneeTel());
+                    wareChildOrderVo.setOrderComment(orderInfo.getOrderComment());
+                    wareChildOrderVo.setOrderBody(orderInfo.getTradeBody());
+                    wareChildOrderVo.setDeliveryAddress(orderInfo.getDeliveryAddress());
+                    wareChildOrderVo.setPaymentWay(orderInfo.getPaymentWay());
+                    wareChildOrderVo.setWareId(orderInfo.getWareId());
+
+                    List<WareChildOrderDetailItemVo> itemVos = orderInfo.getOrderDetailList().stream()
+                            .map(orderDetail -> {
+                                WareChildOrderDetailItemVo itemVo = new WareChildOrderDetailItemVo();
+                                itemVo.setSkuId(orderDetail.getSkuId());
+                                itemVo.setSkuNum(orderDetail.getSkuNum());
+                                itemVo.setSkuName(orderDetail.getSkuName());
+                                return itemVo;
+                            })
+                            .collect(Collectors.toList());
+
+                    wareChildOrderVo.setDetails(itemVos);
+                    return wareChildOrderVo;
+                }).collect(Collectors.toList());
+
+    }
+
+    /**
+     * 保存子订单信息
+     * @param wareMapItem
+     * @param parentOrderInfo
+     * @return
+     */
+    private OrderInfo saveChildOrderInfo(WareMapItem wareMapItem, OrderInfo parentOrderInfo) {
+        //1、子订单中的所有商品
+        List<Long> skuIds = wareMapItem.getSkuIds();
+        //2、子订单是在哪个仓库出库的
+        Long wareId = wareMapItem.getWareId();
+
+        //3、封装一个子订单
+        OrderInfo childOrderInfo = new OrderInfo();
+        childOrderInfo.setConsignee(parentOrderInfo.getConsignee());
+        childOrderInfo.setConsigneeTel(parentOrderInfo.getConsigneeTel());
+        //获取 当前子单的明细
+        List<OrderDetail> childOrderDetails = parentOrderInfo.getOrderDetailList().stream()
+                .filter(v -> skuIds.contains(v.getSkuId()))
+                .collect(Collectors.toList());
+        //当前子订单的明细的总价
+        BigDecimal childPrice = childOrderDetails.stream()
+                .map(v -> v.getOrderPrice().multiply(new BigDecimal(v.getSkuNum())))
+                .reduce(BigDecimal::add)
+                .get();
+        childOrderInfo.setTotalAmount(childPrice);
+
+
+        childOrderInfo.setOrderStatus(parentOrderInfo.getOrderStatus());
+        childOrderInfo.setUserId(parentOrderInfo.getUserId());
+        childOrderInfo.setPaymentWay(parentOrderInfo.getPaymentWay());
+        childOrderInfo.setDeliveryAddress(parentOrderInfo.getDeliveryAddress());
+        childOrderInfo.setOrderComment(parentOrderInfo.getOrderComment());
+        //对外流水号
+        childOrderInfo.setOutTradeNo(parentOrderInfo.getOutTradeNo());
+        childOrderInfo.setTradeBody(childOrderDetails.get(0).getSkuName());
+        childOrderInfo.setCreateTime(new Date());
+        childOrderInfo.setExpireTime(parentOrderInfo.getExpireTime());
+        childOrderInfo.setProcessStatus(parentOrderInfo.getProcessStatus());
+        //每个子订单的物流号不一样
+        // childOrderInfo.setTrackingNo();
+
+        childOrderInfo.setParentOrderId(parentOrderInfo.getId());
+        childOrderInfo.setImgUrl(childOrderDetails.get(0).getImgUrl());
+        childOrderInfo.setOrderDetailList(childOrderDetails);
+        childOrderInfo.setWareId(wareId.toString());
+
+        childOrderInfo.setProvinceId(0L);
+        childOrderInfo.setActivityReduceAmount(new BigDecimal("0"));
+        childOrderInfo.setCouponAmount(new BigDecimal("0"));
+        childOrderInfo.setOriginalTotalAmount(new BigDecimal("0"));
+        //根据当前商品的性质自己觉得
+        childOrderInfo.setRefundableTime(parentOrderInfo.getRefundableTime());
+        childOrderInfo.setFeightFee(parentOrderInfo.getFeightFee());
+        childOrderInfo.setOperateTime(new Date());
+
+        //保存子订单
+        orderInfoService.save(childOrderInfo);
+        childOrderDetails.forEach(orderDetail -> orderDetail.setOrderId(childOrderInfo.getId()));
+        orderDetailService.saveBatch(childOrderDetails);
+
+        return childOrderInfo;
     }
 }

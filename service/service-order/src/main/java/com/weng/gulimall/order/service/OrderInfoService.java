@@ -20,4 +20,7 @@ public interface OrderInfoService extends IService<OrderInfo> {
     void changeOrderStatus(Long orderId, Long userId, ProcessStatus whileChange, List<ProcessStatus> expected);
 
     OrderInfo getOrderInfoByTradeAndUserId(String outTradeNo, Long userId);
+
+    OrderInfo getOrderInfoByOrderIdAndUserId(Long orderId, Long userId);
+
 }

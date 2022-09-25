@@ -117,6 +117,20 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
     }
 
     /**
+     * 查询订单数据，尽量不要连表查询，
+     * 可能导致索引失效，已经大表驱动小表的情况
+     * @param orderId orderId
+     * @param userId userId
+     * @return OrderInfo
+     */
+    @Override
+    public OrderInfo getOrderInfoByOrderIdAndUserId(Long orderId, Long userId) {
+        return baseMapper.selectOne(new LambdaQueryWrapper<OrderInfo>()
+                .eq(OrderInfo::getUserId, userId)
+                .eq(OrderInfo::getId, orderId));
+    }
+
+    /**
      * 封装订单信息详情数据
      *
      * @param orderSubmitVo orderSubmitVo

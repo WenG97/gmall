@@ -2,6 +2,10 @@ package com.weng.gulimall.order.biz;
 
 import com.weng.gulimall.model.vo.order.OrderConfirmDataVo;
 import com.weng.gulimall.model.vo.order.OrderSubmitVo;
+import com.weng.gulimall.model.vo.order.OrderWareMapVo;
+import com.weng.gulimall.model.vo.order.WareChildOrderVo;
+
+import java.util.List;
 
 public interface OrderBizService {
 
@@ -19,4 +23,6 @@ public interface OrderBizService {
     Long submitOrder(String tradeNo, OrderSubmitVo orderSubmitVo);
 
     void closeOrder(Long orderId, Long userId);
+
+    List<WareChildOrderVo> orderSplit(OrderWareMapVo vo);
 }

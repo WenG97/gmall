@@ -2,6 +2,7 @@ package com.weng.gulimall.model.enums;
 
 public enum OrderStatus {
     UNPAID("未支付"),
+    WAITING_SCHEDULE("正在调货"),
     PAID("已支付" ),
     WAITING_DELEVER("待发货"),
     DELEVERED("已发货"),
