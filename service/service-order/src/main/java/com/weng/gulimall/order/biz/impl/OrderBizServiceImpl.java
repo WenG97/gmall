@@ -1,7 +1,5 @@
 package com.weng.gulimall.order.biz.impl;
 
-import com.weng.gulimall.model.activity.CouponInfo;
-import com.google.common.collect.Lists;
 
 import java.util.Date;
 
@@ -32,7 +30,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -201,7 +198,7 @@ public class OrderBizServiceImpl implements OrderBizService {
      */
     @Override
     public List<WareChildOrderVo> orderSplit(OrderWareMapVo vo) {
-        //todo :拆单完成
+
         //父订单ID
         Long parentOrderId = vo.getOrderId();
         OrderInfo parentOrderInfo = orderInfoService.getById(parentOrderId);
@@ -216,6 +213,13 @@ public class OrderBizServiceImpl implements OrderBizService {
         List<OrderInfo> splitOrders = wareMapItems.stream()
                 .map(o -> saveChildOrderInfo(o, parentOrderInfo))
                 .collect(Collectors.toList());
+
+        //将父单状态修改为已拆分
+        orderInfoService.changeOrderStatus(parentOrderId,
+                parentOrderInfo.getUserId(),
+                ProcessStatus.SPLIT,
+                Arrays.asList(ProcessStatus.PAID)
+                );
 
        return convertSplitOrdersToWareChildOrderVo(splitOrders);
     }
